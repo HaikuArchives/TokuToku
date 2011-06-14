@@ -33,6 +33,7 @@ class BMenuField;
 class GaduListItem;
 class GaduMenuItem;
 class BScrollView;
+class ContactList;
 
 class MainWindow : public BWindow
 	{
@@ -54,6 +55,8 @@ class MainWindow : public BWindow
 		void AboutRequested();
 
 	private:
+		void ShowContactMenu(BPoint where);
+
 		/* to gg */
 		Profile				*	iProfile;
 		Network				*	iNetwork;
@@ -62,7 +65,7 @@ class MainWindow : public BWindow
 		BResources				iResources;
 		BView				*	iGaduView;
 		BScrollView			*	iScrollView;
-		BListView			*	iListView;
+		ContactList			*	iListView;
 		GaduListItem		*	iListItem;
 		List				*	iListItems;
 		BMenu				*	iSubMenu;

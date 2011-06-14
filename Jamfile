@@ -9,7 +9,7 @@ LINKLIBS = -L./lib -L/boot/home/config/lib -L/boot/home/BeGadu-20050613/common/l
 RESOURCE = BeGadu.rsrc Resources.rsrc ;
 
 Main BeGadu :
-	src/BeGadu.cpp src/Main.cpp src/Chat.cpp
+	src/BeGadu.cpp src/Main.cpp src/Chat.cpp src/ContactList.cpp
 	src/Debug.cpp src/Network.cpp src/NetworkHandler.cpp
 	src/NetworkLibrary.cpp src/NetworkInterface.cpp src/Person.cpp
 	src/Preferences.cpp src/GfxStuff.cpp src/GaduListItem.cpp

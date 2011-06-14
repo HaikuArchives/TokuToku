@@ -23,6 +23,7 @@
 #include <ScrollView.h>
 #include <String.h>
 #include <StringView.h>
+#include <LayoutBuilder.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -34,6 +35,7 @@
 #include "Network.h"
 #include "Preferences.h"
 #include "Person.h"
+#include "ContactList.h"
 
 #define MAINWINDOW_RECT BRect(50,50,300,350)
 #define MAINWINDOW_NAME	"BeGadu " WERSJA
@@ -108,7 +110,7 @@ MainWindow::MainWindow( BString* aProfile )
 	r.right -= B_V_SCROLL_BAR_WIDTH;
 	r.bottom -= 30;
 
-	iListView = new BListView( r, "iListView", B_SINGLE_SELECTION_LIST, B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS | B_FULL_UPDATE_ON_RESIZE | B_NAVIGABLE  );
+	iListView = new ContactList( r, "iListView", B_SINGLE_SELECTION_LIST, B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS | B_FULL_UPDATE_ON_RESIZE | B_NAVIGABLE  );
 	iListView->SetViewColor( 110, 110, 110 );
 	BFont *font = new BFont( be_plain_font );
 	font->SetSize( 15.0 );
@@ -282,6 +284,15 @@ void MainWindow::MessageReceived( BMessage* aMessage )
 			delete message;
 			break;
 			}
+
+		case CONTACT_RIGHTCLICK:
+		{
+			fprintf(stderr, "MainWindow::MessageReceived(CONTACT_RIGHTCLICK)\n");
+			BPoint where(0, 0);
+			aMessage->FindPoint("where", &where);
+			ShowContactMenu(where);
+			break;
+		}
 
 		case SET_AVAIL:
 			{
@@ -628,4 +639,28 @@ void MainWindow::AboutRequested(void)
 	about->SetShortcut(0, B_ESCAPE);
 	if (about != NULL)
 		about->Go();
+}
+
+void
+MainWindow::ShowContactMenu(BPoint where)
+{
+	BPopUpMenu *menu = new BPopUpMenu("contact_menu", false, false);
+
+	BLayoutBuilder::Menu<>(menu)
+		.AddItem("Informacje", CONTACTMENU_INFO)
+		.AddItem("Rozmowa", CONTACTMENU_TALK)
+		.AddItem("Dziennik rozmów", CONTACTMENU_LOGS)
+			.SetEnabled(false)
+		.AddSeparator()
+		.AddItem("Usuń z listy", CONTACTMENU_REMOVE)
+			.SetEnabled(false)
+		.AddItem("Ignoruj", CONTACTMENU_IGNORE)
+			.SetEnabled(false)
+	;
+
+	menu->SetTargetForItems(this);
+	// We use the iListView screen context, since that's where the message 
+	// originated from
+	iListView->ConvertToScreen(&where);
+	menu->Go(where, true, true, true);
 }

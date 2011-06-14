@@ -63,5 +63,15 @@
 #define BGDESKBAR_CHSTATE		'chst'
 #define ADD_MESSENGER			'adme'
 #define DEL_MESSENGER			'deme'
+#define CONTACT_RIGHTCLICK		'corc'
+
+/* contact menu */
+
+#define CONTACTMENU_INFO		'CMif'
+#define CONTACTMENU_TALK		'CMtl'
+#define CONTACTMENU_LOGS		'CMlg'
+#define CONTACTMENU_REMOVE		'CMrm'
+#define CONTACTMENU_IGNORE		'CMig'
+
 
 #endif /* __BEGADU_MSG_H__ */
