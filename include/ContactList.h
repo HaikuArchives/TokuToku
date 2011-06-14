@@ -1,3 +1,10 @@
+/*
+ * Copyright 2011 Łukasz 'sil2100' Zemczak. All rights reserved.
+ *
+ * Authors:
+ *     Łukasz 'sil2100' Zemczak, sil2100@vexillium.org
+ */
+
 #ifndef __BEGADU_CONTACTLIST_H__
 #define __BEGADU_CONTACTLIST_H__
 

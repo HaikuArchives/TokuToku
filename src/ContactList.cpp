@@ -1,3 +1,10 @@
+/*
+ * Copyright 2011 Łukasz 'sil2100' Zemczak. All rights reserved.
+ *
+ * Authors:
+ *     Łukasz 'sil2100' Zemczak, sil2100@vexillium.org
+ */
+
 #include "ContactList.h"
 #include "Msg.h"
 
