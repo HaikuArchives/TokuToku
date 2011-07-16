@@ -36,6 +36,7 @@
 #include "Preferences.h"
 #include "Person.h"
 #include "ContactList.h"
+#include "StatusWindow.h"
 
 #define MAINWINDOW_RECT BRect(50,50,300,350)
 #define MAINWINDOW_NAME	"BeGadu " WERSJA
@@ -257,8 +258,10 @@ void MainWindow::MessageReceived( BMessage* aMessage )
 			}
 			
 		case BEGG_PERSON_ACTION:
-			{
+		{
 			fprintf( stderr, "MainWindow::MessageReceived( BEGG_PERSON_ACTION )\n" );
+
+#if 0
 			if( iListView->CurrentSelection() < 0 )
 				{
 				break;
@@ -277,13 +280,19 @@ void MainWindow::MessageReceived( BMessage* aMessage )
 				{
 				break;
 				}
+#endif
+
+			Person *person = GetContactAt(iListView->CurrentSelection());
+			if (person == NULL || person->iUIN == iProfile->iNumber)
+				break;
+
 			BMessage *message;
-			message = new BMessage( OPEN_MESSAGE );
-			message->AddInt32( "who", person->iUIN );
-			BMessenger( iNetwork ).SendMessage( message );		
+			message = new BMessage(OPEN_MESSAGE);
+			message->AddInt32("who", person->iUIN);
+			BMessenger(iNetwork).SendMessage(message);
 			delete message;
 			break;
-			}
+		}
 
 		case CONTACT_RIGHTCLICK:
 		{
@@ -429,7 +438,7 @@ void MainWindow::MessageReceived( BMessage* aMessage )
 				
 				if( p->iUIN == iProfile->iNumber )
 					{
-					g = new GaduListItem( p->iDisplay, iNetwork->GetStatus(), iProfile->iDescription, &iResources );
+					g = new GaduListItem( p->iDisplay, iNetwork->GetStatus(), iProfile->iDescription, &iResources, p );
 					if( iNetwork->GetStatus() == GG_STATUS_NOT_AVAIL || iNetwork->GetStatus() == GG_STATUS_NOT_AVAIL_DESCR ||
 						iNetwork->GetStatus() == GG_STATUS_INVISIBLE || iNetwork->GetStatus() == GG_STATUS_INVISIBLE_DESCR )
 						{
@@ -446,11 +455,11 @@ void MainWindow::MessageReceived( BMessage* aMessage )
 						{
 						BString *empty = new BString();
 						empty->SetTo( "" );
-						g = new GaduListItem( p->iDisplay, p->iStatus, empty, &iResources );
+						g = new GaduListItem( p->iDisplay, p->iStatus, empty, &iResources, p );
 						}
 					else
 						{
-						g = new GaduListItem( p->iDisplay, p->iStatus, p->iDescription, &iResources );
+						g = new GaduListItem( p->iDisplay, p->iStatus, p->iDescription, &iResources, p );
 						}
 
 					if( p->iStatus == GG_STATUS_NOT_AVAIL || p->iStatus == GG_STATUS_NOT_AVAIL_DESCR )
@@ -519,11 +528,55 @@ void MainWindow::MessageReceived( BMessage* aMessage )
 			break;
 			}
 
+		// TODO: Maybe move all these things to ContactList?
+		case CONTACTMENU_INFO:
+		{
+			fprintf( stderr, "MainWindow::MessageReceived( CONTACTMENU_INFO )\n" );
+
+			Person *target = GetContactAt(iListView->CurrentSelection());
+			if (target == NULL)
+				break;
+
+			// XXX: Temporary until StatusWindow is not finished
+			BString content("");
+			content << "Numer GG: " << target->iUIN << "\n";
+			content << "Description:\n" << target->iDescription->String() << "\n";
+			BAlert *info = new BAlert("contact_info",
+				   content.String(),
+				   "OK");
+			info->SetShortcut(0, B_ESCAPE);
+			if (info != NULL)
+				info->Go();
+
+			break;
+		}
+
 		default:
 			BWindow::MessageReceived( aMessage );
 			break;
 		}
 	}
+
+Person *
+MainWindow::GetContactAt(int index)
+{
+	if (index < 0)
+		return NULL;
+
+	Person *person = NULL, *whoPerson = NULL;
+	BList *list = iProfile->GetUserlist()->GetList();
+	int i, count = list->CountItems();
+	GaduListItem *who = (GaduListItem *)iListView->ItemAt(index);
+	whoPerson = who->GetPerson();
+	for (i = 0; i < count; i++) {
+		person = (Person *)list->ItemAt(i);
+		if (person->iUIN == whoPerson->iUIN)
+			return person;
+	}
+
+	return NULL;
+}
+
 
 int MainWindow::SortUsers( const void *left, const void *right )
 	{
@@ -648,7 +701,7 @@ MainWindow::ShowContactMenu(BPoint where)
 
 	BLayoutBuilder::Menu<>(menu)
 		.AddItem("Informacje", CONTACTMENU_INFO)
-		.AddItem("Rozmowa", CONTACTMENU_TALK)
+		.AddItem("Rozmowa", BEGG_PERSON_ACTION)
 		.AddItem("Dziennik rozmów", CONTACTMENU_LOGS)
 			.SetEnabled(false)
 		.AddSeparator()

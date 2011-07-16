@@ -64,11 +64,12 @@
 #define ADD_MESSENGER			'adme'
 #define DEL_MESSENGER			'deme'
 #define CONTACT_RIGHTCLICK		'corc'
+#define STATUSWINDOW_OK			'swok'
+#define STATUSWINDOW_REFRESH	'swrf'
 
 /* contact menu */
 
 #define CONTACTMENU_INFO		'CMif'
-#define CONTACTMENU_TALK		'CMtl'
 #define CONTACTMENU_LOGS		'CMlg'
 #define CONTACTMENU_REMOVE		'CMrm'
 #define CONTACTMENU_IGNORE		'CMig'

@@ -1,8 +1,10 @@
 /*
+ * Copyright 2011 Łukasz 'sil2100' Zemczak. All rights reserved.
+ *
  * Authors:
- *  aljen <aljen@gumisie.be> (original author)
- *  Lukasz 'sil2100' Zemczak <sil2100@vexillium.org>
-*/
+ *     Artur 'aljen' Wyszynski <harakash@gmail.com>
+ *     Łukasz 'sil2100' Zemczak <sil2100@vexillium.org>
+ */
 
 #include <stdio.h>
 #include <stdlib.h>

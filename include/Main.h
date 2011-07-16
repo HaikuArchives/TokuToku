@@ -1,13 +1,9 @@
 /*
- * ============================================================================
- *  Nazwa    : Main z Main.h
- *  Projekt  : BeGadu
- *  Authorzy : 
- *		Artur Wyszynski <artur.wyszynski@bellstream.pl>
- *  Opis:
- *		Glowne okno programu
- *  Version  : 1.2
- * ============================================================================
+ * Copyright 2011 Łukasz 'sil2100' Zemczak. All rights reserved.
+ *
+ * Authors:
+ *     Artur 'aljen' Wyszynski <harakash@gmail.com>
+ *     Łukasz 'sil2100' Zemczak <sil2100@vexillium.org>
  */
 
 #ifndef __BEGADU_MAINWINDOW_H__
@@ -34,70 +30,73 @@ class GaduListItem;
 class GaduMenuItem;
 class BScrollView;
 class ContactList;
+class Person;
 
-class MainWindow : public BWindow
-	{
-	public:
-		MainWindow( BString* aProfile );
-		virtual bool QuitRequested();
-		virtual void MessageReceived( BMessage* aMessage );
-		void SetStatus( char* aStatus );
-		void SetProfile( BString* aProfile );
-		void SetMessenger( BMessenger& aMessenger );
-		static int SortUsers( const void*, const void* );
-		void LoadIcons();
-		BBitmap* GetBitmap( const char* aName );
-		Profile* GetProfile() const;
-		Network* GetNetwork() const;
-		BListView* ListView() const;
-		GaduListItem* ListItem() const;
-		List* ListItems() const;
-		void AboutRequested();
+class MainWindow : public BWindow {
+public:
+	MainWindow(BString *aProfile);
+	virtual bool QuitRequested();
+	virtual void MessageReceived(BMessage *aMessage);
 
-	private:
-		void ShowContactMenu(BPoint where);
+	static int SortUsers(const void *, const void *);
 
-		/* to gg */
-		Profile				*	iProfile;
-		Network				*	iNetwork;
+	void SetStatus(char *aStatus);
+	void SetProfile(BString *aProfile);
+	void SetMessenger(BMessenger &aMessenger);
+	void LoadIcons();
+	BBitmap *GetBitmap(const char *aName);
+	Person *GetContactAt(int index);
+	Profile *GetProfile() const;
+	Network *GetNetwork() const;
+	BListView *ListView() const;
+	GaduListItem *ListItem() const;
+	List *ListItems() const;
+	void AboutRequested();
 
-		/* to interface */
-		BResources				iResources;
-		BView				*	iGaduView;
-		BScrollView			*	iScrollView;
-		ContactList			*	iListView;
-		GaduListItem		*	iListItem;
-		List				*	iListItems;
-		BMenu				*	iSubMenu;
-		BMenuItem			*	iProfileItem;
+private:
+	void ShowContactMenu(BPoint where);
 
-		BMenuItem			*	iListMenu;
-		BMenuItem			*	iListImport;
-		BMenuItem			*	iListExport;
+	/* to gg */
+	Profile				*	iProfile;
+	Network				*	iNetwork;
 
-		BMenuItem			*	iAddPerson;
-		BMenuItem			*	iDelPerson;
-		BMenuItem			*	iCatalog;
-		BMenuItem			*	iAbout;
-		BMenuItem			*	iPreferences;
-		BView				*	iIconsView;
+	/* to interface */
+	BResources				iResources;
+	BView				*	iGaduView;
+	BScrollView			*	iScrollView;
+	ContactList			*	iListView;
+	GaduListItem		*	iListItem;
+	List				*	iListItems;
+	BMenu				*	iSubMenu;
+	BMenuItem			*	iProfileItem;
 
-		BMenuField			*	iStatus;
-		BPopUpMenu			*	iStatusMenu;
-		GaduMenuItem		*	iAvail;
-		GaduMenuItem		*	iBRB;
-		GaduMenuItem		*	iInvisible;
-		GaduMenuItem		*	iNotAvail;
-		GaduMenuItem		*	iDescr;
-		BBitmap				*	iIconAvail;
-		BBitmap				*	iIconBRB;
-		BBitmap				*	iIconInvisible;
-		BBitmap				*	iIconNotAvail;
-		BBitmap				*	iIconAvailDescr;
-		BBitmap				*	iIconBRBDescr;
-		BBitmap				*	iIconInvisibleDescr;
-		BBitmap				*	iIconNotAvailDescr;
-		BMessenger				iDeskbarMessenger;
-	};
+	BMenuItem			*	iListMenu;
+	BMenuItem			*	iListImport;
+	BMenuItem			*	iListExport;
 
-#endif /* __BEGADU_MAINWINDOW_H__ */
+	BMenuItem			*	iAddPerson;
+	BMenuItem			*	iDelPerson;
+	BMenuItem			*	iCatalog;
+	BMenuItem			*	iAbout;
+	BMenuItem			*	iPreferences;
+	BView				*	iIconsView;
+
+	BMenuField			*	iStatus;
+	BPopUpMenu			*	iStatusMenu;
+	GaduMenuItem		*	iAvail;
+	GaduMenuItem		*	iBRB;
+	GaduMenuItem		*	iInvisible;
+	GaduMenuItem		*	iNotAvail;
+	GaduMenuItem		*	iDescr;
+	BBitmap				*	iIconAvail;
+	BBitmap				*	iIconBRB;
+	BBitmap				*	iIconInvisible;
+	BBitmap				*	iIconNotAvail;
+	BBitmap				*	iIconAvailDescr;
+	BBitmap				*	iIconBRBDescr;
+	BBitmap				*	iIconInvisibleDescr;
+	BBitmap				*	iIconNotAvailDescr;
+	BMessenger				iDeskbarMessenger;
+};
+
+#endif
