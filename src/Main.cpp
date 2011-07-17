@@ -24,6 +24,7 @@
 #include <String.h>
 #include <StringView.h>
 #include <LayoutBuilder.h>
+#include <Notification.h>
 #include <stdlib.h>
 #include <string.h>
 

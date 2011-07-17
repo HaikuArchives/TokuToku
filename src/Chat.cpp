@@ -12,6 +12,8 @@
 #include <TextView.h>
 #include <Screen.h>
 #include <String.h>
+#include <Notification.h>
+#include <Roster.h>
 #include "Msg.h"
 #include "Chat.h"
 #include "Network.h"
@@ -93,11 +95,11 @@ ChatWindow::ChatWindow( Network *aNetwork, MainWindow *aWindow, uin_t aWho )
 	}
 
 void ChatWindow::MessageReceived( BMessage* aMessage )
-	{
+{
 	switch( aMessage->what )
-		{
+	{
 		case SHOW_MESSAGE:
-			{
+		{
 			const char *msg;
 			aMessage->FindString( "msg", &msg );
 			time_t _now = time( NULL );
@@ -146,17 +148,31 @@ void ChatWindow::MessageReceived( BMessage* aMessage )
 			iChat->Insert( iChat->TextLength(), str2->String(), str2->Length() );
 			BScrollBar * scrollBar = iScrollView->ScrollBar( B_VERTICAL );
 			if( scrollBar->LockLooper() )
-				{
+			{
 				float max,min;
 				scrollBar->GetRange( &min, &max );
 				scrollBar->SetValue( max );
 				scrollBar->UnlockLooper();
-				}
+			}
+
+			// Notify about a new message when our chat window has no focus
+			if (!IsFront()) {
+				BString s("Wiadomość od ");
+				s << str->String();
+				BNotification notify(B_INFORMATION_NOTIFICATION);
+				notify.SetApplication("TokuToku");
+				notify.SetTitle(s.String());
+				notify.SetContent(msg);
+				notify.SetOnClickApp("application/x-vnd.BeGadu");
+
+				be_roster->Notify(notify, (bigtime_t)0);
+			}
+
 			delete str;
 			delete str2;
-			break;			
-			}
-			
+			break;
+		}
+
 		case BEGG_SEND:
 			{
 			if( iSayControl->LockLooper())
@@ -232,7 +248,7 @@ void ChatWindow::MessageReceived( BMessage* aMessage )
 			BWindow::MessageReceived( aMessage );
 			break;
 		}
-	}
+}
 
 bool ChatWindow::QuitRequested()
 	{
