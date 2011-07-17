@@ -41,6 +41,7 @@ class Preferences : public BWindow
 		BTextControl		*	iNumberControl;
 		BTextControl		*	iPasswordControl;
 		BCheckBox			*	iCheckRemember;
+		BCheckBox			*	iCheckNotify;
 };
 
 #endif /* __BEGADU_PREFERENCES_H__ */

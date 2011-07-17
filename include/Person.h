@@ -130,6 +130,7 @@ class Profile
 		BString				*	iDescription;
 		bool					iNeedImport;
 		bool					iRememberStatus;
+		bool					iStatusNotify;
 
 	private:
 		void					Obfuscate(char *buffer, size_t size);

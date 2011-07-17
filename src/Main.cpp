@@ -39,9 +39,51 @@
 #include "ContactList.h"
 #include "StatusWindow.h"
 
+
+static const char *
+string_from_status(int32 status)
+{
+	switch (status) {
+		case GG_STATUS_NOT_AVAIL:
+		case GG_STATUS_NOT_AVAIL_DESCR:
+			return "Niedostępny";
+
+		case GG_STATUS_AVAIL:
+		case GG_STATUS_AVAIL_DESCR:
+			return "Dostępny";
+
+		case GG_STATUS_BUSY:
+		case GG_STATUS_BUSY_DESCR:
+			return "Zajęty";
+
+		case GG_STATUS_INVISIBLE:
+		case GG_STATUS_INVISIBLE_DESCR:
+			return "Niewidoczny";
+
+		case GG_STATUS_BLOCKED:
+			return "Zablokowany";
+
+		default:
+			break;
+	}
+
+	return "Nieznany";
+}
+
+static bool
+status_added_descr(int32 olds, int32 news)
+{
+	if ((olds == GG_STATUS_NOT_AVAIL && news == GG_STATUS_NOT_AVAIL_DESCR) ||
+		(olds == GG_STATUS_AVAIL && news == GG_STATUS_AVAIL_DESCR) ||
+		(olds == GG_STATUS_BUSY && news == GG_STATUS_BUSY_DESCR) ||
+		(olds == GG_STATUS_INVISIBLE && news == GG_STATUS_INVISIBLE_DESCR))
+		return true;
+	return false;
+}
+
+
 #define MAINWINDOW_RECT BRect(50,50,300,350)
 #define MAINWINDOW_NAME	"BeGadu " WERSJA
-
 
 MainWindow::MainWindow( BString* aProfile )
  	: BWindow( MAINWINDOW_RECT, MAINWINDOW_NAME, B_TITLED_WINDOW, 
@@ -261,28 +303,6 @@ void MainWindow::MessageReceived( BMessage* aMessage )
 		case BEGG_PERSON_ACTION:
 		{
 			fprintf( stderr, "MainWindow::MessageReceived( BEGG_PERSON_ACTION )\n" );
-
-#if 0
-			if( iListView->CurrentSelection() < 0 )
-				{
-				break;
-				}
-			Person* person = NULL;
-			GaduListItem *who = ( GaduListItem* ) iListView->ItemAt( iListView->CurrentSelection() );
-			for( int i = 0; i < iProfile->GetUserlist()->GetList()->CountItems(); i++ )
-				{
-				person = ( Person* ) iProfile->GetUserlist()->GetList()->ItemAt( i );
-				if( !person->iDisplay->Compare( who->iName->String() ) )
-					{
-					break;
-					}
-				}
-			if( person->iUIN == iProfile->iNumber )
-				{
-				break;
-				}
-#endif
-
 			Person *person = GetContactAt(iListView->CurrentSelection());
 			if (person == NULL || person->iUIN == iProfile->iNumber)
 				break;
@@ -309,14 +329,12 @@ void MainWindow::MessageReceived( BMessage* aMessage )
 			fprintf( stderr, "MainWindow::MessageReceived( SET_AVAIL )\n" );
 			if( iNetwork->Session() )
 				{
-				fprintf( stderr, "dupsko\n" );
 				gg_change_status( iNetwork->Session(), GG_STATUS_AVAIL );
 				iNetwork->SetStatus( GG_STATUS_AVAIL );
 				BMessenger( this ).SendMessage( UPDATE_LIST );
 				}
 			else
 				{
-				fprintf( stderr, "dupsko2\n" );
 				iNetwork->Login( GG_STATUS_AVAIL );
 				}
 			iProfile->SetAutoStatus( GG_STATUS_AVAIL );
@@ -551,6 +569,34 @@ void MainWindow::MessageReceived( BMessage* aMessage )
 
 			break;
 		}
+
+		case CONTACT_STATUS_CHANGED:
+			fprintf( stderr, "MainWindow::MessageReceived( CONTACT_STATUS_CHANGED )\n" );
+			if (iProfile->iStatusNotify) {
+				BString s("");
+
+				Person* o = NULL;
+				int32 uin = 0;
+				aMessage->FindInt32("UIN", &uin);
+				if (!(o = iProfile->GetUserlist()->Find(uin)))
+					break;
+				int32 old = 0;
+				aMessage->FindInt32("old_status", &old);
+				if (old == o->iStatus || status_added_descr(old, o->iStatus))
+					break;
+
+				s << o->iDisplay->String() << " jest teraz " << 
+					string_from_status(o->iStatus);
+
+				BNotification notify(B_INFORMATION_NOTIFICATION);
+				notify.SetApplication("TokuToku");
+				notify.SetTitle("Kontakt zmienił stan");
+				notify.SetContent(s.String());
+				notify.SetOnClickApp("application/x-vnd.BeGadu");
+
+				be_roster->Notify(notify, (bigtime_t)0);
+			}
+			break;
 
 		default:
 			BWindow::MessageReceived( aMessage );

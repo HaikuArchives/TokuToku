@@ -60,7 +60,9 @@ Preferences::Preferences(Profile* aProfile, MainWindow* aWindow, BRect aRect,
 	buttonOk->MakeDefault(true);
 
 	iCheckRemember = new BCheckBox("iCheckRemember", 
-		"Pamiętaj ostatnio użyty status", new BMessage(PREFERENCES_REMEMBER));
+		"Pamiętaj ostatnio użyty status", new BMessage(PREFERENCES_CHANGE));
+	iCheckNotify = new BCheckBox("iCheckNotify",
+		"Notyfikuj o zmianach statusu", new BMessage(PREFERENCES_CHANGE));
 	BCheckBox *checkSound = new BCheckBox("checkSound",
 		"Włącz dźwięki wiadomości", new BMessage(PREFERENCES_SOUND));
 	checkSound->SetEnabled(false);
@@ -84,6 +86,7 @@ Preferences::Preferences(Profile* aProfile, MainWindow* aWindow, BRect aRect,
 				.Add(BSpaceLayoutItem::CreateHorizontalStrut(10))
 				.Add(BGroupLayoutBuilder(B_VERTICAL, 0)
 					.Add(iCheckRemember)
+					.Add(iCheckNotify)
 					.Add(checkSound)
 				)
 			)
@@ -113,6 +116,7 @@ void Preferences::LoadPreferences(void)
 		iNumberControl->SetText(a.String());
 		iPasswordControl->SetText(iProfile->iPassword->String());
 		iCheckRemember->SetValue((iProfile->iRememberStatus) ? B_CONTROL_ON : B_CONTROL_OFF);
+		iCheckNotify->SetValue((iProfile->iStatusNotify) ? B_CONTROL_ON : B_CONTROL_OFF);
 		fprintf(stderr, "numer: %s\nhaslo: %s\n", a.String(), iProfile->iPassword->String());
 		iNumberControl->UnlockLooper();
 	} 
@@ -132,6 +136,18 @@ void Preferences::MessageReceived(BMessage* aMessage)
 				iProfile->iPassword->SetTo(iPasswordControl->Text());
 				iPasswordControl->UnlockLooper();
 			}
+
+			// Set other options too
+			if (iCheckRemember->Value() == B_CONTROL_OFF)
+				iProfile->iRememberStatus = false;
+			else 
+				iProfile->iRememberStatus = true;
+
+			if (iCheckNotify->Value() == B_CONTROL_OFF)
+				iProfile->iStatusNotify = false;
+			else
+				iProfile->iStatusNotify = true;
+
 			// Now, drop down in switch to close the window
 		}
 
@@ -141,12 +157,9 @@ void Preferences::MessageReceived(BMessage* aMessage)
 			break;
 		}
 
-		case PREFERENCES_REMEMBER:
+		case PREFERENCES_CHANGE:
 		{
-			if (iCheckRemember->Value() == B_CONTROL_OFF)
-				iProfile->iRememberStatus = false;
-			else 
-				iProfile->iRememberStatus = true;
+			// XXX: Should we do something here? For now I think not
 			break;
 		}
 

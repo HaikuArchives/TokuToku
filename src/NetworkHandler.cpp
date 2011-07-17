@@ -361,33 +361,33 @@ void NetworkHandler::HandleEventStatus( struct gg_event *event )
 	BMessenger( iNetwork->iWindow ).SendMessage( UPDATE_LIST );
 	}
 
-void NetworkHandler::HandleEventStatus60( struct gg_event *event )
-	{
-	fprintf( stderr, "NetworkHandler::HandleEventStatus60()\n" );
+void 
+NetworkHandler::HandleEventStatus60(struct gg_event *event)
+{
+	fprintf(stderr, "NetworkHandler::HandleEventStatus60()\n");
 	Userlist* userlist = iNetwork->iWindow->GetProfile()->GetUserlist();
-	List* list = userlist->GetList();
- 	char *descr;
- 	Person* o = NULL;
- 	if( !( o = userlist->Find( iNetwork->iEvent->event.status60.uin ) ) )
- 		{
- 		return;
- 		}
- 	for( int i = 0; i < list->CountItems(); i++ )
-	 	{
- 		o = ( Person* ) list->ItemAt( i );
- 		if( o->iUIN == iNetwork->iEvent->event.status60.uin )
- 			return;
- 		}
- 	o->iStatus = iNetwork->iEvent->event.status60.status;
- 	o->iDescription->SetTo( iNetwork->iEvent->event.status60.descr );
+	Person* o = NULL;
+	int32 uin = iNetwork->iEvent->event.status60.uin;
 
-	if( iNetwork->iWindow->ListView()->LockLooper() )
-		{
+	if (!(o = userlist->Find(uin)))
+		return;
+
+	int32 oldStatus = o->iStatus;
+	o->iStatus = iNetwork->iEvent->event.status60.status;
+	o->iDescription->SetTo(iNetwork->iEvent->event.status60.descr);
+
+	if(iNetwork->iWindow->ListView()->LockLooper()) {
 		iNetwork->iWindow->ListView()->MakeEmpty();
 		iNetwork->iWindow->ListView()->UnlockLooper();
-		}
-	BMessenger( iNetwork->iWindow ).SendMessage( UPDATE_LIST );
 	}
+	BMessenger(iNetwork->iWindow).SendMessage(UPDATE_LIST);
+
+	BMessage *msg = new BMessage(CONTACT_STATUS_CHANGED);
+	msg->AddInt32("UIN", uin);
+	msg->AddInt32("old_status", oldStatus);
+	BMessenger(iNetwork->iWindow).SendMessage(msg);
+	delete msg;
+}
 
 static int Expired( time_t timer )
 	{

@@ -22,6 +22,7 @@
 /* messages to interface */
 #define UPDATE_STATUS			'upst'
 #define UPDATE_LIST				'upli'
+#define CONTACT_STATUS_CHANGED	'ctsc'
 #define SHOW_MESSAGE			'shme'
 
 /* messages from interface */
@@ -52,7 +53,7 @@
 #define BEGG_CONNECTING			1234
 #define PREFERENCES_OK			'peok'
 #define PREFERENCES_CANCEL		'peca'
-#define PREFERENCES_REMEMBER	'pere'
+#define PREFERENCES_CHANGE		'pere'
 #define PREFERENCES_SOUND		'peso'
 #define PROFILE_CREATED			'prcr'
 #define OPEN_PROFILE_WIZARD 	'oppw'
