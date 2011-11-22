@@ -42,6 +42,7 @@ class ProfileWizard : public BWindow
 		~ProfileWizard();
 		virtual void MessageReceived( BMessage* aMessage );
 		virtual void Show();
+		virtual bool QuitRequested();
 		bool iBreak;
 		Profile* iProfile;
 	

@@ -18,9 +18,9 @@
 #define PROFILWIZARD_NAME "Utwórz profil..."
 
 ProfileWizard::ProfileWizard() 
-	: BWindow( PROFILWIZARD_RECT, PROFILWIZARD_NAME, B_TITLED_WINDOW,
-			   B_NOT_ZOOMABLE | B_NOT_MOVABLE | B_NOT_RESIZABLE )
-	{
+	: BWindow(PROFILWIZARD_RECT, PROFILWIZARD_NAME, B_TITLED_WINDOW,
+            B_NOT_ZOOMABLE | B_NOT_RESIZABLE)
+{
 	iBreak = false;
 	iProfile = new Profile();
 	BRect r = Bounds();
@@ -82,7 +82,7 @@ ProfileWizard::ProfileWizard()
 	iPBox1->AddChild( tv );
 	iPage1->AddChild( iPBox1 );
 	r = Bounds();
-	iCancel1 = new BButton( button, "iCancel1", "Cancel", new BMessage( GO_CANCEL ) );
+	iCancel1 = new BButton( button, "iCancel1", "Cancel", new BMessage( B_QUIT_REQUESTED ) );
 	iPage1->AddChild( iCancel1 );
 	button.OffsetBy( 200, 0 );
 	iBack1 = new BButton( button, "iBack1", "Back", new BMessage( GO_BACK1 ) );
@@ -100,7 +100,7 @@ ProfileWizard::ProfileWizard()
 										"",
 										B_FOLLOW_ALL, B_WILL_DRAW );
 	font = new BFont( be_bold_font );
-//	font->SetEncoding(B_ISO_8859_2);
+	font->SetEncoding(B_ISO_8859_2);
 	font->SetSize( 18.0 );
 	sv->SetFont( font );
 	sv->SetText( "Co chcesz zrobić ?" );
@@ -198,10 +198,10 @@ ProfileWizard::ProfileWizard()
 	iPage3->Hide();
 	iPage4->Hide();
 	iNext1->MakeDefault( true );
-	}
+}
 
 ProfileWizard::~ProfileWizard()
-	{
+{
 /*
 	delete iNext1;
 	delete iNext2;
@@ -227,106 +227,112 @@ ProfileWizard::~ProfileWizard()
 	delete iPassword;
 	delete iNumber;
 */
-	}
+}
 
-void ProfileWizard::MessageReceived( BMessage* aMessage )
+void ProfileWizard::MessageReceived(BMessage* aMessage)
+{
+	switch (aMessage->what)
 	{
-	switch( aMessage->what )
-		{
-		case GO_CANCEL:
-			{
-			BAlert* alert = new BAlert( "Wizard",
-				"Przykro mi ale musisz miec jakis profil, sprobuj jeszcze raz :P",
-				"Ehh :/" );
-			alert->Go();
-			delete alert;
-			break;
-			}
-			
 		case GO_NEXT1:
-			{
+		{
 			iPage1->Hide();
 			iPage2->Show();
 			iNext2->MakeDefault( true );
 			break;
-			}
-			
+		}
+
 		case GO_BACK1:
-			{
+		{
 			break;
-			}
-			
+		}
+
 		case GO_NEXT2:
-			{
+		{
 			iPage2->Hide();
 			iPage3->Show();
 			iNext3->MakeDefault( true );
 			break;
-			}
-			
+		}
+
 		case GO_BACK2:
-			{
+		{
 			iPage2->Hide();
 			iPage1->Show();
 			break;
-			}
-			
+		}
+
 		case GO_NEXT3:
-			{
+		{
 			if( iName->LockLooper() )
-				{
+			{
 				iProfile->ProfileName()->SetTo( iName->Text() );
 				iName->UnlockLooper();
-				}
+			}
 			if( iNumber->LockLooper() )
-				{
+			{
 				iProfile->SetUIN( atoi( iNumber->Text() ) );
 				iNumber->UnlockLooper();
-				}
+			}
 			if( iPassword->LockLooper() )
-				{
+			{
 				iProfile->iPassword->SetTo( iPassword->Text() );
 				iPassword->UnlockLooper();
-				}
+			}
 			iProfile->Save();
 			BMessage *mesg = new BMessage( PROFILE_CREATED );
 			mesg->AddString( "ProfileName", *iProfile->ProfileName() );
 			BMessenger( be_app ).SendMessage( mesg );
 			delete mesg;
 			if( Lock() )
-				{
-				Quit();
-				}
-			break;
-			}
-			
-		case GO_BACK3:
 			{
+				Quit();
+			}
+			break;
+		}
+
+		case GO_BACK3:
+		{
 			iPage3->Hide();
 			iPage2->Show();
 			break;
-			}
-			
+		}
+
 		case GO_NEXT4:
-			{
+		{
 			break;
-			}
-			
+		}
+
 		case GO_BACK4:
-			{
+		{
 			iPage4->Hide();
 			iPage3->Show();
 			break;
-			}
-			
+		}
+
 		default:
 			BWindow::MessageReceived( aMessage );
 			break;
-		}
+	}
+}
+
+bool ProfileWizard::QuitRequested()
+{
+	bool ret = false;
+	BAlert *alert = new BAlert("wizard",
+	  "By aplikacja mogła działać poprawnie wymagane jest założenie nowego "
+	  "profilu. Czy chcesz zakończyć działanie programu?",
+	  "Tak", "Nie");
+
+	if (!alert->Go()) {
+		BMessenger(be_app).SendMessage(B_QUIT_REQUESTED);
+		ret = true;
 	}
 
+	return ret;
+}
+
 void ProfileWizard::Show()
-	{
+{
 	BScreen *screen = new BScreen( this );
 	display_mode mode;
 	screen->GetMode( &mode );
@@ -339,4 +345,4 @@ void ProfileWizard::Show()
 	int32 y_wind = mode.timing.v_display/2 - ( wysokosc / 2 );
 	MoveTo( x_wind, y_wind );
 	BWindow::Show();
-	}
+}
