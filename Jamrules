@@ -12,6 +12,7 @@ LINK = g++ ;
 # po zlinkowaniu programu, dodaj resy
 actions Link bind NEEDLIBS
 {
+	rc -o TokuToku.rsrc TokuToku.rdef # TODO: make this being done dynamically
 	$(LINK) $(LINKFLAGS) -o $(1) $(UNDEPS) $(2) $(NEEDLIBS) $(LINKLIBS)
 	xres -o $(1) $(RESOURCE)
 	mimeset -f $(1)

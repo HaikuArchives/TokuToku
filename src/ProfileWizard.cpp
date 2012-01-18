@@ -6,6 +6,9 @@
 #include <Application.h>
 #include <Alert.h>
 #include <String.h>
+#include <SpaceLayoutItem.h>
+#include <GroupLayoutBuilder.h>
+#include <CardLayout.h>
 #include <libgadu.h>
 
 #include "Main.h"
@@ -18,9 +21,105 @@
 #define PROFILWIZARD_NAME "Utwórz profil..."
 
 ProfileWizard::ProfileWizard() 
-	: BWindow(PROFILWIZARD_RECT, PROFILWIZARD_NAME, B_TITLED_WINDOW,
-            B_NOT_ZOOMABLE | B_NOT_RESIZABLE)
+	:
+	BWindow(PROFILWIZARD_RECT, PROFILWIZARD_NAME, B_TITLED_WINDOW,
+          B_NOT_ZOOMABLE | B_NOT_RESIZABLE),
+	iPhase(0)
 {
+	iNext = new BButton("next", "Dalej", new BMessage(GO_NEXT));
+	iNext->MakeDefault(true);
+	iPrev = new BButton("prev", "Wróć", new BMessage(GO_PREV));
+	iPrev->SetEnabled(false);
+	iCancel = new BButton("cancel_pw", "Anuluj", new BMessage(B_QUIT_REQUESTED));
+
+	BFont *font = new BFont(be_bold_font);
+
+	BBox *boxOne = new BBox(B_PLAIN_BORDER, NULL);
+	BTextView *tv = new BTextView("tv");
+	tv->MakeEditable(false);
+	tv->MakeSelectable(false);
+	tv->SetStylable(true);
+	tv->SetFontAndColor(font);
+	tv->Insert("Witaj w kreatorze profili\n");
+	font->SetFace(B_REGULAR_FACE);
+	tv->SetFontAndColor(font);
+	tv->Insert( "\n\nTen kreator pomoże Ci skonfigurować swoje istniejące konto "
+				"na serwerze Gadu-Gadu, lub założyć nowe.\n\n"
+				"Aby kontynuować, wciśnij " );
+	font->SetFace(B_BOLD_FACE);
+	tv->SetFontAndColor(font);
+	tv->Insert("Dalej.");
+
+	BBox *boxTwo = new BBox(B_PLAIN_BORDER, NULL);
+	BStringView *stringWhat = new BStringView("stringWhatDo", "Co chcesz zrobić?");
+	BRadioButton *radioOne = new BRadioButton("radioOne", "Skonfigurować istniejące konto", new BMessage());
+	BRadioButton *radioTwo = new BRadioButton("radioTwo", "Założyć nowe konto", new BMessage());
+	radioTwo->SetEnabled(false);
+	radioOne->SetValue(1);
+
+	BBox *boxThree = new BBox(B_PLAIN_BORDER, NULL);
+	BStringView *stringWho = new BStringView("stringWho", "Podaj dane konta");
+	iName = new BTextControl("iName", "Nazwa profilu", "", NULL);
+	iNumber = new BTextControl("iNumber", "Numer GG", "", NULL);
+	iPassword = new BTextControl("iPassword", "Hasło", "", NULL);
+	iPassword->TextView()->HideTyping(true);
+	iName->TextView()->MakeFocus(true);
+
+
+	// Sub-layouts
+	boxOne->SetLayout(new BGroupLayout(B_HORIZONTAL));
+	boxOne->AddChild(tv);
+
+	boxTwo->SetLayout(new BGroupLayout(B_HORIZONTAL));
+	boxTwo->AddChild(BGroupLayoutBuilder(B_VERTICAL, 0)
+		.AddGlue()
+		.Add(stringWhat)
+		.Add(BSpaceLayoutItem::CreateVerticalStrut(5))
+		.Add(radioOne)
+		.Add(radioTwo)
+		.AddGlue()
+		.SetInsets(15, 5, 15, 5)
+	);
+
+	boxThree->SetLayout(new BGroupLayout(B_HORIZONTAL));
+	boxThree->AddChild(BGroupLayoutBuilder(B_VERTICAL, 0)
+		.AddGlue()
+		.Add(stringWho)
+		.Add(BSpaceLayoutItem::CreateVerticalStrut(5))
+		.Add(iName)
+		.Add(BSpaceLayoutItem::CreateVerticalStrut(5))
+		.Add(iNumber)
+		.Add(iPassword)
+		.AddGlue()
+		.SetInsets(15, 5, 15, 5)
+	);
+
+	iLayout = new BCardLayout();
+	BView *cards = new BView("cardsView", 0, iLayout);
+	iLayout->Owner()->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+
+	iLayout->AddView(boxOne);
+	iLayout->AddView(boxTwo);
+	iLayout->AddView(boxThree);
+	iLayout->SetVisibleItem((int32)0);
+
+	// Main layout
+	SetLayout(new BGroupLayout(B_HORIZONTAL));
+
+	AddChild(BGroupLayoutBuilder(B_VERTICAL, 0)
+		.Add(iLayout)
+		.Add(BGroupLayoutBuilder(B_HORIZONTAL, 0)
+			.Add(iCancel)
+			.AddGlue()
+			.Add(iPrev)
+			.Add(iNext)
+		)
+	);
+
+	// Create the new profile
+	iProfile = new Profile();
+
+#if 0
 	iBreak = false;
 	iProfile = new Profile();
 	BRect r = Bounds();
@@ -198,6 +297,7 @@ ProfileWizard::ProfileWizard()
 	iPage3->Hide();
 	iPage4->Hide();
 	iNext1->MakeDefault( true );
+#endif
 }
 
 ProfileWizard::~ProfileWizard()
@@ -233,6 +333,60 @@ void ProfileWizard::MessageReceived(BMessage* aMessage)
 {
 	switch (aMessage->what)
 	{
+		case GO_NEXT:
+		{
+			iPhase++;
+			if (iPhase < 3) {
+				iLayout->SetVisibleItem(iPhase);
+				if (iPhase == 1)
+					iPrev->SetEnabled(true);
+				else if (iPhase == 2)
+					iNext->SetLabel("Zakończ");
+			}
+			else {
+				// Finish
+				// Code left intact
+				if (iName->LockLooper()) {
+					iProfile->ProfileName()->SetTo(iName->Text());
+					iName->UnlockLooper();
+				}
+				if (iNumber->LockLooper()) {
+					iProfile->SetUIN(atoi(iNumber->Text()));
+					iNumber->UnlockLooper();
+				}
+				if (iPassword->LockLooper()) {
+					iProfile->iPassword->SetTo(iPassword->Text()); // TODO FIXME Crashes when passwd empty
+					iPassword->UnlockLooper();
+				}
+				iProfile->Save();
+				BMessage *mesg = new BMessage(PROFILE_CREATED);
+				mesg->AddString("ProfileName", *iProfile->ProfileName());
+				BMessenger(be_app).SendMessage(mesg);
+				delete mesg;
+
+				if (Lock())
+					Quit();
+			}
+			break;
+		}
+
+		case GO_PREV:
+		{
+			iPhase--;
+			if (iPhase >= 0) {
+				iLayout->SetVisibleItem(iPhase);
+				if (iPhase == 0)
+					iPrev->SetEnabled(false);
+				else if (iPhase == 1)
+					iNext->SetLabel("Dalej");
+			}
+			else {
+				iPhase = 0;
+			}
+			break;
+		}
+
+#if 0
 		case GO_NEXT1:
 		{
 			iPage1->Hide();
@@ -308,9 +462,10 @@ void ProfileWizard::MessageReceived(BMessage* aMessage)
 			iPage3->Show();
 			break;
 		}
+#endif
 
 		default:
-			BWindow::MessageReceived( aMessage );
+			BWindow::MessageReceived(aMessage);
 			break;
 	}
 }

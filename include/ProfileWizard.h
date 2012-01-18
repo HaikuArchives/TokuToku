@@ -23,10 +23,12 @@ class BView;
 class BButton;
 class BRadioButton;
 class BBox;
+class BCardLayout;
 
 /* Wiadomości od okna */
-#define GO_NEXT1 	'gne1'
-#define GO_BACK1 	'gba1'
+#define GO_NEXT 	'gnex'
+#define GO_PREV 	'gpre'
+/*
 #define GO_NEXT2 	'gne2'
 #define GO_BACK2 	'gba2'
 #define GO_NEXT3 	'gne3'
@@ -34,9 +36,10 @@ class BBox;
 #define GO_NEXT4 	'gne4'
 #define GO_BACK4 	'gba4'
 #define GO_CANCEL	'goca'
+*/
 
 class ProfileWizard : public BWindow
-	{
+{
 	public:
 		ProfileWizard();
 		~ProfileWizard();
@@ -47,36 +50,29 @@ class ProfileWizard : public BWindow
 		Profile* iProfile;
 	
 	private:
-		BView			*	iPage1;
-		BView			*	iPage2;
-		BView			*	iPage3;
-		BView			*	iPage4;
-		BBox			*	iPBox1;
-		BBox			*	iPBox2;
-		BBox			*	iPBox3;
-		BBox			*	iPBox4;
-		
+		BView			*iPage1;
+		BView			*iPage2;
+		BView			*iPage3;
+		BView			*iPage4;
+		BBox			*iPBox1;
+		BBox			*iPBox2;
+		BBox			*iPBox3;
+		BBox			*iPBox4;
+		int				iPhase;
 
-		BRadioButton	*	iHave;
-		BRadioButton	*	iNew;
+		BRadioButton	*iHave;
+		BRadioButton	*iNew;
 
-		BTextControl	*	iName;
-		BTextControl	*	iNumber;
-		BTextControl	*	iPassword;
-		BTextControl	*	iEmail;
+		BTextControl	*iName;
+		BTextControl	*iNumber;
+		BTextControl	*iPassword;
+		BTextControl	*iEmail;
 
-		BButton			*	iNext1;
-		BButton			*	iBack1;
-		BButton			*	iCancel1;
-		BButton			*	iNext2;
-		BButton			*	iBack2;
-		BButton			*	iCancel2;
-		BButton			*	iNext3;
-		BButton			*	iBack3;
-		BButton			*	iCancel3;
-		BButton			*	iNext4;
-		BButton			*	iBack4;
-		BButton			*	iCancel4;
-	};
+		BButton			*iNext;
+		BButton			*iPrev;
+		BButton			*iCancel;
+
+		BCardLayout	*iLayout;
+};
 
 #endif /* __BEGADU_PROFILWIZARD_H__ */

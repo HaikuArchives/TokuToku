@@ -23,7 +23,7 @@
 #include "Preferences.h"
 #include "ProfileWizard.h"
 
-BeGadu::BeGadu() : BApplication( "application/x-vnd.BeGadu" )
+BeGadu::BeGadu() : BApplication( "application/x-vnd.TokuToku" )
 	{
 	/* we're checking configuration */
 	iFirstRun = false;

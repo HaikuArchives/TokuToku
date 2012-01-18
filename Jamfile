@@ -6,7 +6,7 @@
 
 SubDir TOP ;
 LINKLIBS = -L./lib -L/boot/home/config/lib -L/boot/home/BeGadu-20050613/common/lib -L/boot/system/lib -lbe -lroot -ltextencoding -lgnu -lbsd -ltranslation -lgadu -lnetwork ;
-RESOURCE = BeGadu.rsrc Resources.rsrc ;
+RESOURCE = TokuToku.rsrc Resources.rsrc ; # BeGadu.rsrc
 
 Main BeGadu :
 	src/BeGadu.cpp src/Main.cpp src/Chat.cpp src/ContactList.cpp
