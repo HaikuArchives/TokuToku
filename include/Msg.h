@@ -1,7 +1,7 @@
 /*
  * ============================================================================
  *  Nazwa    : Msg z Msg.h
- *  Projekt  : BeGadu
+ *  Projekt  : TokuToku
  *  Authorzy : 
  *		Artur Wyszynski <artur.wyszynski@bellstream.pl>
  *  Opis:
@@ -58,8 +58,8 @@
 #define PROFILE_CREATED			'prcr'
 #define OPEN_PROFILE_WIZARD 	'oppw'
 #define CONFIG_OK				'cfok'
-#define ONLINE_SOUND			"BeGadu state changed"
-#define MESSAGE_SOUND			"BeGadu new message"
+#define ONLINE_SOUND			"TokuToku state changed"
+#define MESSAGE_SOUND			"TokuToku new message"
 #define SHOW_MAIN_WINDOW		'bsmw'
 #define BGDESKBAR_CHSTATE		'chst'
 #define ADD_MESSENGER			'adme'

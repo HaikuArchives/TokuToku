@@ -1,15 +1,15 @@
 #
-# BeGadu Jamfile, v1.0
-# Ten plik jest częścią kodu źródłowego BeGadu
+# TokuToku Jamfile, v1.0
+# Ten plik jest częścią kodu źródłowego TokuToku
 # http://begadu.sf.net
 #
 
 SubDir TOP ;
-LINKLIBS = -L./lib -L/boot/home/config/lib -L/boot/home/BeGadu-20050613/common/lib -L/boot/system/lib -lbe -lroot -ltextencoding -lgnu -lbsd -ltranslation -lgadu -lnetwork ;
-RESOURCE = TokuToku.rsrc Resources.rsrc ; # BeGadu.rsrc
+LINKLIBS = -L./lib -L/boot/home/config/lib -L/boot/home/TokuToku-20050613/common/lib -L/boot/system/lib -lbe -lroot -ltextencoding -lgnu -lbsd -ltranslation -lgadu -lnetwork ;
+RESOURCE = TokuToku.rsrc Resources.rsrc ; # TokuToku.rsrc
 
-Main BeGadu :
-	src/BeGadu.cpp src/Main.cpp src/Chat.cpp src/ContactList.cpp
+Main TokuToku :
+	src/TokuToku.cpp src/Main.cpp src/Chat.cpp src/ContactList.cpp
 	src/Debug.cpp src/Network.cpp src/NetworkHandler.cpp
 	src/NetworkLibrary.cpp src/NetworkInterface.cpp src/Person.cpp
 	src/Preferences.cpp src/GfxStuff.cpp src/GaduListItem.cpp
@@ -17,12 +17,12 @@ Main BeGadu :
 	src/BGDeskbar.cpp
 	src/xmalloc.c src/dynstuff.c src/strlcpy.c ;
 
-BinPackage BeGadu-$(WERSJA)-bin.zip ;
-Depends BeGadu-$(WERSJA).zip-bin : BeGadu ;
-SourcePackage BeGadu-$(WERSJA).zip ;
-Depends BeGadu-$(WERSJA).zip : BeGadu ;
+BinPackage TokuToku-$(WERSJA)-bin.zip ;
+Depends TokuToku-$(WERSJA).zip-bin : TokuToku ;
+SourcePackage TokuToku-$(WERSJA).zip ;
+Depends TokuToku-$(WERSJA).zip : TokuToku ;
 
 NotFile package ;
 Depends package :
-	BeGadu-$(WERSJA)-bin.zip
-	BeGadu-$(WERSJA).zip ;
+	TokuToku-$(WERSJA)-bin.zip
+	TokuToku-$(WERSJA).zip ;

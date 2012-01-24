@@ -1,7 +1,7 @@
 /*
  * ============================================================================
- *  Nazwa    : BeGadu z BeGadu.h
- *  Projekt  : BeGadu
+ *  Nazwa    : TokuToku z TokuToku.h
+ *  Projekt  : TokuToku
  *  Authorzy : 
  *		Artur Wyszynski <artur.wyszynski@bellstream.pl>
  *  Opis:
@@ -19,10 +19,10 @@
 class DebugWindow;
 class MainWindow;
 
-class BeGadu : public BApplication
+class TokuToku : public BApplication
 	{
 	public:
-		BeGadu();
+		TokuToku();
 		virtual bool QuitRequested();
 		virtual void MessageReceived(BMessage *message);
 		virtual void ReadyToRun();

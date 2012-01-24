@@ -1,7 +1,7 @@
 /*
  * ============================================================================
  *  Name     : BGDeskbar from BGDeskbar.h
- *  Part of  : BeGadu
+ *  Part of  : TokuToku
  *  Authors  : 
  *		Artur Wyszynski <artur.wyszynski@bellstream.pl>
  *  Implementation notes:
@@ -151,10 +151,10 @@ void BGDeskbar::Initialize()
 	BRoster roster;
 	entry_ref ref;
 	BFile resfile;
-	if( roster.IsRunning( "application/x-vnd.BeGadu" ) )
+	if( roster.IsRunning( "application/x-vnd.TokuToku" ) )
 		{
-		fprintf( stderr, "BGDeskbar: Jest BeGadu :D\n" );
-		roster.FindApp( "application/x-vnd.BeGadu", &ref );
+		fprintf( stderr, "BGDeskbar: Jest TokuToku :D\n" );
+		roster.FindApp( "application/x-vnd.TokuToku", &ref );
 		resfile.SetTo( &ref, B_READ_ONLY );	
 		iResources.SetTo( &resfile );
 		iIconAvail = GetBitmap( "online" );
@@ -171,8 +171,8 @@ void BGDeskbar::Initialize()
 		}
 	else
 		{
-		fprintf(stderr, "BGDeskbar: Nie ma BeGadu :(\n" );
-		be_roster->Launch( "application/x-vnd.BeGadu" );
+		fprintf(stderr, "BGDeskbar: Nie ma TokuToku :(\n" );
+		be_roster->Launch( "application/x-vnd.TokuToku" );
 		}
 	iMenu = new BPopUpMenu( "BGDeskbarMenu", true, true );
 	GaduMenuItem *availItem = new GaduMenuItem( iIconAvail, "Dostepny", new BMessage( SET_AVAIL ) );
@@ -186,7 +186,7 @@ void BGDeskbar::Initialize()
 	GaduMenuItem *descrItem = new GaduMenuItem( iIconAvailDescr, "Zmien opis", new BMessage( SET_DESCRIPTION ) );
 	iMenu->AddItem( descrItem );
 	iMenu->AddSeparatorItem();
-	GaduMenuItem *aboutItem = new GaduMenuItem( iIconAvail, "O BeGadu..", new BMessage( BEGG_ABOUT ) );
+	GaduMenuItem *aboutItem = new GaduMenuItem( iIconAvail, "O TokuToku..", new BMessage( BEGG_ABOUT ) );
 	iMenu->AddItem( aboutItem );
 	GaduMenuItem *quitItem = new GaduMenuItem( iIconQuit, "Zakoncz", new BMessage( BEGG_QUIT ) );
 	iMenu->AddItem( quitItem );
@@ -213,7 +213,7 @@ BArchivable* BGDeskbar::Instantiate( BMessage *aData )
 status_t BGDeskbar::Archive( BMessage *aData, bool aDeep = true) const
 	{
 	BView::Archive( aData, aDeep );
-	aData->AddString( "add_on", "application/x-vnd.BeGadu" );
+	aData->AddString( "add_on", "application/x-vnd.TokuToku" );
 	return B_NO_ERROR;
 	}
 
@@ -330,7 +330,7 @@ void BGDeskbar::MouseDown( BPoint aWhere )
 	if( buttons & B_PRIMARY_MOUSE_BUTTON )
 		{
 		fprintf( stderr, "BGDeskbar: MouseDown( B_PRIMARY_MOUSE_BUTTON )\n" );
-		BMessenger( "application/x-vnd.BeGadu" ).SendMessage( new BMessage( SHOW_MAIN_WINDOW ) );
+		BMessenger( "application/x-vnd.TokuToku" ).SendMessage( new BMessage( SHOW_MAIN_WINDOW ) );
 //		if( iWindow->LockLooper() )
 //		{
 //			if( iWindow->IsHidden() )
@@ -346,7 +346,7 @@ void BGDeskbar::MouseDown( BPoint aWhere )
 		GaduMenuItem *selectedItem = (GaduMenuItem*) iMenu->Go( ConvertToScreen( aWhere ), false, true );
 		if( selectedItem )
 			{
-			BMessenger( "application/x-vnd.BeGadu" ).SendMessage( selectedItem->Message() );
+			BMessenger( "application/x-vnd.TokuToku" ).SendMessage( selectedItem->Message() );
 			}
 		}
 	}
@@ -357,7 +357,7 @@ void BGDeskbar::AttachedToWindow()
 	snooze( 500*100 );
 	BMessage* message = new BMessage( ADD_MESSENGER );
 	message->AddMessenger( "messenger", BMessenger( this ) );
-	BMessenger( "application/x-vnd.BeGadu" ).SendMessage( message );
+	BMessenger( "application/x-vnd.TokuToku" ).SendMessage( message );
 	delete message;
 	/* temporary empty */
 	BView::AttachedToWindow();

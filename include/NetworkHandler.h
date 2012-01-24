@@ -1,7 +1,7 @@
 /*
  * ============================================================================
  *  Nazwa    : SiecHandler z SiecHandler.h
- *  Projekt  : BeGadu
+ *  Projekt  : TokuToku
  *  Authorzy : 
  *		Artur Wyszynski <artur.wyszynski@bellstream.pl>
  *  Opis:

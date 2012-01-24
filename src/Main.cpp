@@ -83,7 +83,7 @@ status_added_descr(int32 olds, int32 news)
 
 
 #define MAINWINDOW_RECT BRect(50,50,300,350)
-#define MAINWINDOW_NAME	"BeGadu " WERSJA
+#define MAINWINDOW_NAME	"TokuToku " WERSJA
 
 MainWindow::MainWindow( BString* aProfile )
  	: BWindow( MAINWINDOW_RECT, MAINWINDOW_NAME, B_TITLED_WINDOW, 
@@ -96,7 +96,7 @@ MainWindow::MainWindow( BString* aProfile )
 	BRoster roster;
 	entry_ref ref;
 	BFile resfile;
-	roster.FindApp( "application/x-vnd.BeGadu", &ref );
+	roster.FindApp( "application/x-vnd.TokuToku", &ref );
 	resfile.SetTo( &ref, B_READ_ONLY );
 	iResources.SetTo( &resfile );
 	LoadIcons();
@@ -125,7 +125,7 @@ MainWindow::MainWindow( BString* aProfile )
 
 	iPreferences = new BMenuItem( "Ustawienia", new BMessage( BEGG_PREFERENCES ) );
 	menu->AddItem( iPreferences );
-	iAbout = new BMenuItem( "O BeGadu..", new BMessage( BEGG_ABOUT ) );
+	iAbout = new BMenuItem( "O TokuToku..", new BMessage( BEGG_ABOUT ) );
 	menu->AddItem( iAbout );
 	menu->AddItem( new BMenuItem( "Zakończ", new BMessage( BEGG_QUIT ) ) );
 	menuBar->AddItem( menu );
@@ -137,8 +137,8 @@ MainWindow::MainWindow( BString* aProfile )
 //	fIconsView->SetViewColor(100,100,100);
 //	AddChild(fIconsView);
 
-//	BBitmap *stan1 = LoadGFX("/boot/apps/BeGadu/images/1.png");
-//	BBitmap *stan2 = LoadGFX("/boot/apps/BeGadu/images/2.png");
+//	BBitmap *stan1 = LoadGFX("/boot/apps/TokuToku/images/1.png");
+//	BBitmap *stan2 = LoadGFX("/boot/apps/TokuToku/images/2.png");
 //	IconControl *iconcontrol = new IconControl(BRect(r.left, r.top + 3, r.left + 30, r.top + 30), "iconcontrol", stan1, stan2, new BMessage(B_QUIT_REQUESTED));
 //	AddChild(iconcontrol);
 	
@@ -592,7 +592,7 @@ void MainWindow::MessageReceived( BMessage* aMessage )
 				notify.SetApplication("TokuToku");
 				notify.SetTitle("Kontakt zmienił stan");
 				notify.SetContent(s.String());
-				notify.SetOnClickApp("application/x-vnd.BeGadu");
+				notify.SetOnClickApp("application/x-vnd.TokuToku");
 
 				be_roster->Notify(notify, (bigtime_t)0);
 			}
@@ -731,7 +731,7 @@ void MainWindow::SetMessenger( BMessenger& aMessenger )
 void MainWindow::AboutRequested(void)
 {
 	BAlert *about = new BAlert("about",
-	       "TokuToku (BeGadu)\n\n"
+	       "TokuToku (TokuToku)\n\n"
 	       "Autorzy:\n"
 	       "     Artur Wyszynski (autor orginalu)\n"
 	       "     Lukasz 'sil2100' Zemczak\n",

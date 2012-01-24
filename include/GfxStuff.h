@@ -1,7 +1,7 @@
 /*
  * ============================================================================
  *  Name     : GfxStuff from GfxStuff.h
- *  Part of  : BeGadu
+ *  Part of  : TokuToku
  *  Authors  : 
  *		Artur Wyszynski <artur.wyszynski@bellstream.pl>
  *  Implementation notes:

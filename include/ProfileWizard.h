@@ -1,7 +1,7 @@
 /*
  * ============================================================================
  *  Nazwa    : ProfilWizard z ProfilWizard.h
- *  Projekt  : BeGadu
+ *  Projekt  : TokuToku
  *  Authorzy : 
  *		Artur Wyszynski <artur.wyszynski@bellstream.pl>
  *  Opis:

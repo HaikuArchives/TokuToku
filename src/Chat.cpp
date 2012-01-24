@@ -163,7 +163,7 @@ void ChatWindow::MessageReceived( BMessage* aMessage )
 				notify.SetApplication("TokuToku");
 				notify.SetTitle(s.String());
 				notify.SetContent(msg);
-				notify.SetOnClickApp("application/x-vnd.BeGadu");
+				notify.SetOnClickApp("application/x-vnd.TokuToku");
 
 				be_roster->Notify(notify, (bigtime_t)0);
 			}

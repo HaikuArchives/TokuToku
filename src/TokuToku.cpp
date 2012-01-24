@@ -1,5 +1,5 @@
 /*
-	BeGadu.cpp - Client G*adu-G*adu for BeOS
+	TokuToku.cpp - Client G*adu-G*adu for BeOS
 	Code: aljen <aljen@gumisie.org>
 	Homepage: http://gadu.beos.pl
 */
@@ -15,7 +15,7 @@
 #include <Alert.h>
 
 #include "Msg.h"
-#include "BeGadu.h"
+#include "TokuToku.h"
 #include "Network.h"
 #include "Main.h"
 #include "Person.h"
@@ -23,7 +23,7 @@
 #include "Preferences.h"
 #include "ProfileWizard.h"
 
-BeGadu::BeGadu() : BApplication( "application/x-vnd.TokuToku" )
+TokuToku::TokuToku() : BApplication( "application/x-vnd.TokuToku" )
 	{
 	/* we're checking configuration */
 	iFirstRun = false;
@@ -36,22 +36,22 @@ BeGadu::BeGadu() : BApplication( "application/x-vnd.TokuToku" )
 	find_directory( B_USER_SETTINGS_DIRECTORY, &path );
 	BDirectory * bg_conf = new BDirectory( path.Path() );
 	
-	if( bg_conf->FindEntry( "BeGadu", &entry ) != B_OK )
+	if( bg_conf->FindEntry( "TokuToku", &entry ) != B_OK )
 		{
-		path.Append( "BeGadu" );
+		path.Append( "TokuToku" );
 		bg_conf->CreateDirectory( path.Path(), bg_conf );
 		}
 	
 	if( bg_conf->FindEntry( "Profiles", &entry ) != B_OK )
 		{
 		find_directory( B_USER_SETTINGS_DIRECTORY, &path );
-		path.Append( "BeGadu/Profiles" );
+		path.Append( "TokuToku/Profiles" );
 		error = bg_conf->CreateDirectory( path.Path(), bg_conf );
 		iFirstRun = true;
 		}
 
 	find_directory( B_USER_SETTINGS_DIRECTORY, &path );
-	path.Append( "BeGadu/Profiles" );
+	path.Append( "TokuToku/Profiles" );
 	bg_conf->SetTo( path.Path() );
 	
 	if( bg_conf->CountEntries() == 0 )
@@ -65,7 +65,7 @@ BeGadu::BeGadu() : BApplication( "application/x-vnd.TokuToku" )
 	
 	/* loading configuration */
 	find_directory( B_USER_SETTINGS_DIRECTORY, &path );
-	path.Append( "BeGadu/Config" );
+	path.Append( "TokuToku/Config" );
 	BFile file( path.Path(), B_READ_ONLY );
 	fprintf( stderr, "Loading configuration from %s\n", path.Path() );
 	BMessage *cfgmesg = new BMessage();
@@ -98,7 +98,7 @@ BeGadu::BeGadu() : BApplication( "application/x-vnd.TokuToku" )
 		}
 	}
 
-void BeGadu::MessageReceived( BMessage *aMessage )
+void TokuToku::MessageReceived( BMessage *aMessage )
 	{
 	switch( aMessage->what )
 		{
@@ -113,7 +113,7 @@ void BeGadu::MessageReceived( BMessage *aMessage )
 		
 		case ADD_MESSENGER:
 			{
-			fprintf( stderr, "BeGadu::MessageReceived( ADD_MESSENGER )\n" );
+			fprintf( stderr, "TokuToku::MessageReceived( ADD_MESSENGER )\n" );
 			BMessenger messenger;
 			aMessage->FindMessenger( "messenger", &messenger );
 			if( iWindow )
@@ -204,13 +204,13 @@ void BeGadu::MessageReceived( BMessage *aMessage )
 		}
 	}
 
-void BeGadu::ReadyToRun()
+void TokuToku::ReadyToRun()
 	{
-	fprintf( stderr, "BeGadu::ReadyToRun()\n" );
+	fprintf( stderr, "TokuToku::ReadyToRun()\n" );
 	AddDeskbarIcon();
 	}
 
-bool BeGadu::QuitRequested()
+bool TokuToku::QuitRequested()
 	{
 	DelDeskbarIcon();
 	if( iWindow->Lock() )
@@ -226,7 +226,7 @@ bool BeGadu::QuitRequested()
 	
 	BPath path;
 	find_directory( B_USER_SETTINGS_DIRECTORY, &path );
-	path.Append( "BeGadu/Config" );
+	path.Append( "TokuToku/Config" );
 	fprintf( stderr, "Last profile: %s\n", iLastProfile->String() );
 	fprintf( stderr, "Saving configuration to %s\n", path.Path() );
 	BFile file( path.Path(), B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE );
@@ -241,32 +241,32 @@ bool BeGadu::QuitRequested()
 	return true;
 	}
 
-void BeGadu::AddDeskbarIcon()
+void TokuToku::AddDeskbarIcon()
 	{
-	fprintf( stderr, "BeGadu::AddDeskbarIcon()\n" );
+	fprintf( stderr, "TokuToku::AddDeskbarIcon()\n" );
 	BDeskbar deskbar;
 	if( !deskbar.HasItem( "BGDeskbar" ) )
 		{
 		BRoster roster;
 		entry_ref ref;
-		status_t status = roster.FindApp( "application/x-vnd.BeGadu", &ref );
+		status_t status = roster.FindApp( "application/x-vnd.TokuToku", &ref );
 		if( status != B_OK )
 			{
-			fprintf( stderr, "Can't find BeGadu running %s\n", strerror( status ) );
+			fprintf( stderr, "Can't find TokuToku running %s\n", strerror( status ) );
 			return;
 			}
 		status = deskbar.AddItem( &ref );
 		if( status != B_OK )
 			{
-			fprintf( stderr, "Can't put BeGadu into Deskbar: %s\n", strerror( status ) );
+			fprintf( stderr, "Can't put TokuToku into Deskbar: %s\n", strerror( status ) );
 			return;
 			}
 		}
 	}
 
-void BeGadu::DelDeskbarIcon()
+void TokuToku::DelDeskbarIcon()
 	{
-	fprintf( stderr, "BeGadu::DelDeskbarIcon()\n" );
+	fprintf( stderr, "TokuToku::DelDeskbarIcon()\n" );
 	BDeskbar deskbar;
 	if( deskbar.HasItem( "BGDeskbar" ) )
 		{
@@ -274,34 +274,34 @@ void BeGadu::DelDeskbarIcon()
 		}
 	}
 
-MainWindow* BeGadu::GetMainWindow() const
+MainWindow* TokuToku::GetMainWindow() const
 	{
 	return iWindow;
 	}
 	
-DebugWindow* BeGadu::GetDebugWindow() const
+DebugWindow* TokuToku::GetDebugWindow() const
 	{
 	return iDebugWindow;
 	}
 
-bool BeGadu::FirstRun()
+bool TokuToku::FirstRun()
 	{
 	return iFirstRun;
 	}
 
-bool BeGadu::HideAtStart()
+bool TokuToku::HideAtStart()
 	{
 	return iHideAtStart;
 	}
 
-BString* BeGadu::LastProfile()
+BString* TokuToku::LastProfile()
 	{
 	return iLastProfile;
 	}
 
 int main(void)
 {
-	BeGadu	*bgg = new BeGadu();
+	TokuToku	*bgg = new TokuToku();
 	bgg->Run();
 	delete bgg;
 	return 0;

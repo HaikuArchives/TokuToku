@@ -1,6 +1,6 @@
 /*
 	SiecHandler.cpp
-	Ten plik jest częscią kodu źródłowego BeGadu.
+	Ten plik jest częscią kodu źródłowego TokuToku.
 	Homepage: http://gadu.beos.pl
 */
 

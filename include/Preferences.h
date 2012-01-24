@@ -1,7 +1,7 @@
 /*
  * ============================================================================
  *  Nazwa    : Opcje z Opcje.h
- *  Projekt  : BeGadu
+ *  Projekt  : TokuToku
  *  Authorzy : 
  *		Artur Wyszynski <artur.wyszynski@bellstream.pl>
  *  Opis:

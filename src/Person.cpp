@@ -1,6 +1,6 @@
 /*
 	Person.cpp
-	Ten plik jest częscią kodu źródłowego BeGadu.
+	Ten plik jest częscią kodu źródłowego TokuToku.
 	Homepage: http://gadu.beos.pl
 */
 
@@ -115,7 +115,7 @@ void Profile::Load( BString* aProfile )
 	BPath path;
 	BMessage *cfgmesg = new BMessage();
 	find_directory( B_USER_SETTINGS_DIRECTORY, &path );
-	path.Append( "BeGadu/Profiles" );
+	path.Append( "TokuToku/Profiles" );
 	path.Append( aProfile->String() );
 	path.Append( "Profile" );
 	BFile file( path.Path(), B_READ_ONLY );
@@ -195,7 +195,7 @@ void Profile::Save()
 	BPath path;
 	BEntry entry;
 	find_directory( B_USER_SETTINGS_DIRECTORY, &path );
-	path.Append( "BeGadu/Profiles");
+	path.Append( "TokuToku/Profiles");
 	BDirectory* profile = new BDirectory( path.Path() );
 	if( profile->FindEntry( iProfileName->String(), &entry ) != B_OK )
 		{
@@ -203,7 +203,7 @@ void Profile::Save()
 		profile->CreateDirectory( path.Path(), profile );
 		}
 	find_directory( B_USER_SETTINGS_DIRECTORY, &path );
-	path.Append( "BeGadu/Profiles" );
+	path.Append( "TokuToku/Profiles" );
 	path.Append( iProfileName->String() );
 	path.Append( "Profile" );
 	BFile file( path.Path(), B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE );
@@ -252,7 +252,7 @@ int Userlist::Read( BString* aName )
 	FILE	*	plik;
 	char	*	buf;
 	find_directory( B_USER_SETTINGS_DIRECTORY, &path );
-	path.Append( "BeGadu/Profiles" );
+	path.Append( "TokuToku/Profiles" );
 	path.Append( aName->String() );
 	path.Append( "Userlist" );
 	
@@ -312,7 +312,7 @@ int Userlist::Write( BString* aName )
 	BPath 		path;
 	FILE	*	plik;
 	find_directory( B_USER_SETTINGS_DIRECTORY, &path );
-	path.Append( "BeGadu/Profiles" );
+	path.Append( "TokuToku/Profiles" );
 	path.Append( aName->String() );
 	path.Append( "Userlist" );
 	char *	contacts, tmp[ PATH_MAX ];
