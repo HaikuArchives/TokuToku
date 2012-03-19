@@ -63,6 +63,8 @@ Preferences::Preferences(Profile* aProfile, MainWindow* aWindow, BRect aRect,
 		"Pamiętaj ostatnio użyty status", new BMessage(PREFERENCES_CHANGE));
 	iCheckNotify = new BCheckBox("iCheckNotify",
 		"Notyfikuj o zmianach statusu", new BMessage(PREFERENCES_CHANGE));
+	iCheckRememberPassword = new BCheckBox("iCheckRememberPassword",
+		"Pamiętaj hasło", new BMessage(PREFERENCES_CHANGE));
 	BCheckBox *checkSound = new BCheckBox("checkSound",
 		"Włącz dźwięki wiadomości", new BMessage(PREFERENCES_SOUND));
 	checkSound->SetEnabled(false);
@@ -87,6 +89,7 @@ Preferences::Preferences(Profile* aProfile, MainWindow* aWindow, BRect aRect,
 				.Add(BGroupLayoutBuilder(B_VERTICAL, 0)
 					.Add(iCheckRemember)
 					.Add(iCheckNotify)
+					.Add(iCheckRememberPassword)
 					.Add(checkSound)
 				)
 			)
@@ -117,6 +120,8 @@ void Preferences::LoadPreferences(void)
 		iPasswordControl->SetText(iProfile->iPassword->String());
 		iCheckRemember->SetValue((iProfile->iRememberStatus) ? B_CONTROL_ON : B_CONTROL_OFF);
 		iCheckNotify->SetValue((iProfile->iStatusNotify) ? B_CONTROL_ON : B_CONTROL_OFF);
+		iCheckRememberPassword->SetValue((iProfile->iRememberPassword) ? 
+				B_CONTROL_ON : B_CONTROL_OFF);
 		fprintf(stderr, "numer: %s\nhaslo: %s\n", a.String(), iProfile->iPassword->String());
 		iNumberControl->UnlockLooper();
 	} 
@@ -124,7 +129,7 @@ void Preferences::LoadPreferences(void)
 
 void Preferences::MessageReceived(BMessage* aMessage)
 {
-	switch(aMessage->what)
+	switch (aMessage->what)
 	{
 		case PREFERENCES_OK:
 		{
@@ -147,6 +152,11 @@ void Preferences::MessageReceived(BMessage* aMessage)
 				iProfile->iStatusNotify = false;
 			else
 				iProfile->iStatusNotify = true;
+
+			if (iCheckRememberPassword->Value() == B_CONTROL_OFF)
+				iProfile->iRememberPassword = false;
+			else 
+				iProfile->iRememberPassword = true;
 
 			// Now, drop down in switch to close the window
 		}

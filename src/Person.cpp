@@ -64,6 +64,7 @@ Profile::Profile()
 	iDescription->SetTo( "" );
 	iRememberStatus = false;
 	iStatusNotify = true;
+	iRememberPassword = true;
 }
 
 void Profile::SetUIN( uin_t aNumber )
@@ -161,6 +162,8 @@ void Profile::Load( BString* aProfile )
 		iRememberStatus = false;
 	if( cfgmesg->FindBool( "iStatusNotify", &iStatusNotify) != B_OK )
 		iStatusNotify = true;
+	if (cfgmesg->FindBool("iRememberPassword", &iRememberPassword) != B_OK)
+		iRememberPassword = true;
 	delete cfgmesg;
 	fprintf(stderr, "Loading %s profile...\n", path.Path());
 	iUserlist->Read( iProfileName );
@@ -182,6 +185,7 @@ void Profile::Save()
 	cfgmesg->AddBool( "iNeedImport", iNeedImport );
 	cfgmesg->AddBool("iRememberStatus", iRememberStatus);
 	cfgmesg->AddBool("iStatusNotify", iStatusNotify);
+	cfgmesg->AddBool("iRememberPassword", iRememberPassword);
 	{
 		// Store the password and it size
 		int32 len = iPassword->Length();

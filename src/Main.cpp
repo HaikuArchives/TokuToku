@@ -90,8 +90,8 @@ MainWindow::MainWindow( BString* aProfile )
  			   B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS )
 	{
 	fprintf( stderr, "MainWindow::MainWindow( %s )\n", aProfile->String() );
-	iProfile = new Profile();
-	iProfile->Load( aProfile );
+	//iProfile = new Profile();
+	//iProfile->Load( aProfile );
 	SetTitle( aProfile->String() );
 	BRoster roster;
 	entry_ref ref;

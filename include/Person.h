@@ -131,6 +131,7 @@ class Profile
 		bool					iNeedImport;
 		bool					iRememberStatus;
 		bool					iStatusNotify;
+		bool					iRememberPassword;
 
 	private:
 		void					Obfuscate(char *buffer, size_t size);

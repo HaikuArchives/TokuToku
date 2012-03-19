@@ -16,7 +16,6 @@
 #include <Window.h>
 #include <Resources.h>
 
-/* zewnetrzne klasy, includowane w zrodle */
 class Profile;
 class BTextControl;
 class BCheckBox;
@@ -29,8 +28,8 @@ class BitmapView;
 class Preferences : public BWindow
 {
 	public:
-		Preferences(Profile* aProfile, MainWindow* aWindow, BRect aRect, BResources* aRes);
-		virtual void MessageReceived( BMessage* aMessage );
+		Preferences(Profile *aProfile, MainWindow *aWindow, BRect aRect, BResources *aRes);
+		virtual void MessageReceived(BMessage *aMessage ;
 		virtual void Show();
 
 	private:
@@ -42,6 +41,7 @@ class Preferences : public BWindow
 		BTextControl		*	iPasswordControl;
 		BCheckBox			*	iCheckRemember;
 		BCheckBox			*	iCheckNotify;
+		BCheckBox			*	iCheckRememberPassword;
 };
 
 #endif /* __BEGADU_PREFERENCES_H__ */

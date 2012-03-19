@@ -22,6 +22,7 @@
 #include "Debug.h"
 #include "Preferences.h"
 #include "ProfileWizard.h"
+#include "LoginPrompt.h"
 
 TokuToku::TokuToku() : BApplication( "application/x-vnd.TokuToku" )
 	{
@@ -141,7 +142,6 @@ void TokuToku::MessageReceived( BMessage *aMessage )
 		case OPEN_PROFILE_WIZARD:
 			{
 			ProfileWizard *pw = new ProfileWizard();
-			printf("Bleeee!\n");
 			pw->Show();
 			break;
 			}
@@ -170,25 +170,47 @@ void TokuToku::MessageReceived( BMessage *aMessage )
 			}
 		
 		case PROFILE_CREATED:
-			{
-			aMessage->FindString( "ProfileName", iLastProfile );
-			fprintf( stderr, "Setting last profile to %s\n", iLastProfile->String() );
+		{
+			aMessage->FindString("ProfileName", iLastProfile);
+			fprintf(stderr, "Setting last profile to %s\n", iLastProfile->String());
+
 			iFirstRun = false;
-			iWindow = new MainWindow( iLastProfile );
-			if( iWindow->LockLooper() )
-				{
-				if( iWindow->IsHidden() )
-					{
-					iWindow->Show();
+
+			iProfile = new Profile();
+			iProfile->Load(iLastProfile);
+
+			if (!iProfile->iRememberPassword) {
+				// We need to display the password prompt, try connecting and then display
+				// the main window
+				LoginPrompt *prompt = new LoginPrompt(iProfile);
+				LoginPrompt::ID *id;
+
+				while (1) {
+					id = prompt->Go();
+					if (id != NULL) {
+						if (_TryConnecting(id))
+							break;
+					} else {
+						BMessenger(this).SendMessage(new BMessage(BEGG_QUIT));
+						break;
 					}
-				else
-					{
-					iWindow->Activate();
-					}
-				iWindow->UnlockLooper();
 				}
-			break;
 			}
+
+			// Continue with the login process
+			iWindow = new MainWindow(iProfile);
+			if (iWindow->LockLooper()) {
+				if (iWindow->IsHidden()) {
+					iWindow->Show();
+				} else {
+					iWindow->Activate();
+				}
+
+				iWindow->UnlockLooper();
+			}
+
+			break;
+		}
 
 		case BEGG_QUIT:
 			{
@@ -203,6 +225,29 @@ void TokuToku::MessageReceived( BMessage *aMessage )
 			}
 		}
 	}
+
+bool TokuToku::_TryConnecting(LoginPrompt::ID *id)
+{
+	// TODO: This shouldn't be in TokuToku class
+	struct gg_session session;
+	struct gg_login_params params;
+
+	memset(&params, 0, sizeof(params));
+	params.uin = id->UID;
+	params.password = (char *)id->password.String();
+	params.async = 0;
+	params.status = GG_STATUS_INVISIBLE;
+	params.server_addr = inet_addr("91.214.237.10");
+
+	session = gg_login(&params);
+	if (session != NULL) {
+		gg_logoff(session);
+		gg_free_session(session);
+		return true;
+	}
+
+	return false;
+}
 
 void TokuToku::ReadyToRun()
 	{
