@@ -29,8 +29,8 @@ TokuToku::TokuToku() : BApplication( "application/x-vnd.TokuToku" )
 	/* we're checking configuration */
 	iFirstRun = false;
 	iHideAtStart = false;
-	iLastProfile = new BString();
-	iLastProfile->SetTo( "" );
+	iLastProfileName = new BString();
+	iLastProfileName->SetTo( "" );
 	BPath path;
 	BEntry entry;
 	status_t error;
@@ -79,9 +79,9 @@ TokuToku::TokuToku() : BApplication( "application/x-vnd.TokuToku" )
 		{
 		iFirstRun =  true;
 		}
-	if( cfgmesg->FindString( "iLastProfile", iLastProfile ) != B_OK )
+	if( cfgmesg->FindString( "iLastProfileName", iLastProfileName ) != B_OK )
 		{
-		iLastProfile->SetTo( "" );
+		iLastProfileName->SetTo( "" );
 		}
 		
 	delete cfgmesg;
@@ -100,30 +100,28 @@ TokuToku::TokuToku() : BApplication( "application/x-vnd.TokuToku" )
 	}
 
 void TokuToku::MessageReceived( BMessage *aMessage )
+{
+	switch (aMessage->what)
 	{
-	switch( aMessage->what )
-		{
 		/* sending mesgs from libgadu to network */
 		case GOT_MESSAGE:
 		case ADD_HANDLER:
 		case DEL_HANDLER:
-			{
-			BMessenger( iWindow->GetNetwork() ).SendMessage( aMessage );
+		{
+			BMessenger(iWindow->GetNetwork()).SendMessage(aMessage);
 			break;
-			}
+		}
 		
 		case ADD_MESSENGER:
-			{
-			fprintf( stderr, "TokuToku::MessageReceived( ADD_MESSENGER )\n" );
+		{
+			fprintf(stderr, "TokuToku::MessageReceived( ADD_MESSENGER )\n");
 			BMessenger messenger;
-			aMessage->FindMessenger( "messenger", &messenger );
-			if( iWindow )
-				{
-				iWindow->SetMessenger( messenger );
-				}
+			aMessage->FindMessenger("messenger", &messenger);
+			if (iWindow)
+				iWindow->SetMessenger(messenger);
 			break;
-			}
-			
+		}
+
 		case SET_AVAIL:
 		case SET_BRB:
 		case SET_INVIS:
@@ -131,109 +129,86 @@ void TokuToku::MessageReceived( BMessage *aMessage )
 		case SET_DESCRIPTION:
 		case BEGG_ABOUT:
 		case SHOW_MAIN_WINDOW:
-			{
-			if( iWindow )
-				{
-				BMessenger( iWindow ).SendMessage( aMessage );
-				}
+		{
+			if (iWindow)
+				BMessenger(iWindow).SendMessage(aMessage);
 			break;
-			}
-		
+		}
+
 		case OPEN_PROFILE_WIZARD:
-			{
+		{
 			ProfileWizard *pw = new ProfileWizard();
 			pw->Show();
 			break;
-			}
+		}
 
-		case CONFIG_OK:
-			{
-			iWindow = new MainWindow( iLastProfile );
-			if( !iHideAtStart )
-				{
-				if( iWindow->LockLooper() )
-					{
-					iWindow->Show();
-					iWindow->UnlockLooper();
-					}
-				}
-			else
-				{
-				if( iWindow->LockLooper() )
-					{
-					iWindow->Show();
-					iWindow->Hide();
-					iWindow->UnlockLooper();
-					}
-				}
-			break;
-			}
-		
 		case PROFILE_CREATED:
 		{
-			aMessage->FindString("ProfileName", iLastProfile);
-			fprintf(stderr, "Setting last profile to %s\n", iLastProfile->String());
+			aMessage->FindString("ProfileName", iLastProfileName);
+			fprintf(stderr, "Setting last profile to %s\n", iLastProfileName->String());
 
 			iFirstRun = false;
+			// Fall through
+		}
 
+		case CONFIG_OK:
+		{
 			iProfile = new Profile();
-			iProfile->Load(iLastProfile);
+			iProfile->Load(iLastProfileName);
 
+			// XXX Here it's failing!
 			if (!iProfile->iRememberPassword) {
-				// We need to display the password prompt, try connecting and then display
-				// the main window
-				LoginPrompt *prompt = new LoginPrompt(iProfile);
-				LoginPrompt::ID *id;
-
-				while (1) {
-					id = prompt->Go();
-					if (id != NULL) {
-						if (_TryConnecting(id))
-							break;
-					} else {
-						BMessenger(this).SendMessage(new BMessage(BEGG_QUIT));
-						break;
-					}
-				}
+				// We need to display the password prompt and try connecting
+				// Only when everything's fine, we'll show the main window
+				iPrompt = new LoginPrompt(new BMessenger(this));
+				iPrompt->Show();
+			}
+			else {
+				// In case where the password is remembered, just show the main window
+				_ShowMainWindow(iProfile);
 			}
 
-			// Continue with the login process
-			iWindow = new MainWindow(iProfile);
-			if (iWindow->LockLooper()) {
-				if (iWindow->IsHidden()) {
-					iWindow->Show();
-				} else {
-					iWindow->Activate();
-				}
+			break;
+		}
 
-				iWindow->UnlockLooper();
-			}
+		case TRY_LOGIN:
+		{
+			LoginPrompt::ID id;
+			aMessage->FindInt32("uin", (int32 *)&(id.UIN));
+			aMessage->FindString("password", &(id.password));
+
+			if (!_TryConnecting(&id))
+				iPrompt->Show(); // Wrong UIN/password, try again
+
+			// Correct password was given, show the main window
+			delete iPrompt;
+			_ShowMainWindow(iProfile);
 
 			break;
 		}
 
 		case BEGG_QUIT:
-			{
-			BMessenger( iWindow ).SendMessage( aMessage );
+		{
+			BMessenger(iWindow).SendMessage(aMessage);
 			break;
-			}
+		}
 
 		default:
-			{
-			BApplication::MessageReceived( aMessage );
+		{
+			BApplication::MessageReceived(aMessage);
 			break;
-			}
 		}
 	}
+}
 
 bool TokuToku::_TryConnecting(LoginPrompt::ID *id)
 {
 	// TODO: This shouldn't be in TokuToku class
-	struct gg_session session;
+	struct gg_session *session;
 	struct gg_login_params params;
 
 	memset(&params, 0, sizeof(params));
-	params.uin = id->UID;
+	params.uin = id->UIN;
 	params.password = (char *)id->password.String();
 	params.async = 0;
 	params.status = GG_STATUS_INVISIBLE;
@@ -247,6 +222,25 @@ bool TokuToku::_TryConnecting(LoginPrompt::ID *id)
 	}
 
 	return false;
+}
+
+void TokuToku::_ShowMainWindow(Profile *profile)
+{
+	iWindow = new MainWindow(profile);
+
+	if (iWindow->LockLooper()) {
+		if (iWindow->IsHidden()) {
+			iWindow->Show();
+		} else {
+			iWindow->Activate();
+		}
+
+		// XXX: Does this make any sense? Shouldn't I just not do Show()?
+		if (iHideAtStart)
+			iWindow->Hide();
+
+		iWindow->UnlockLooper();
+	}
 }
 
 void TokuToku::ReadyToRun()
@@ -267,12 +261,12 @@ bool TokuToku::QuitRequested()
 	BMessage * cfgmesg = new BMessage();
 	cfgmesg->AddBool( "iFirstRun", iFirstRun );
 	cfgmesg->AddBool( "iHideAtStart", iHideAtStart );
-	cfgmesg->AddString( "iLastProfile", *iLastProfile );
+	cfgmesg->AddString( "iLastProfileName", *iLastProfileName );
 	
 	BPath path;
 	find_directory( B_USER_SETTINGS_DIRECTORY, &path );
 	path.Append( "TokuToku/Config" );
-	fprintf( stderr, "Last profile: %s\n", iLastProfile->String() );
+	fprintf( stderr, "Last profile: %s\n", iLastProfileName->String() );
 	fprintf( stderr, "Saving configuration to %s\n", path.Path() );
 	BFile file( path.Path(), B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE );
 	if( file.InitCheck() == B_OK )
@@ -335,19 +329,26 @@ bool TokuToku::FirstRun()
 	}
 
 bool TokuToku::HideAtStart()
-	{
+{
 	return iHideAtStart;
-	}
+}
+
+void TokuToku::SetHideAtStart(bool hide)
+{
+	iHideAtStart = hide;
+}
 
 BString* TokuToku::LastProfile()
 	{
-	return iLastProfile;
+	return iLastProfileName;
 	}
 
 int main(void)
 {
-	TokuToku	*bgg = new TokuToku();
-	bgg->Run();
-	delete bgg;
+	TokuToku *tt = new TokuToku();
+
+	tt->Run();
+
+	delete tt;
 	return 0;
 }

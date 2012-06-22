@@ -34,7 +34,7 @@ class Person;
 
 class MainWindow : public BWindow {
 public:
-	MainWindow(BString *aProfile);
+	MainWindow(Profile *aProfile);
 	virtual bool QuitRequested();
 	virtual void MessageReceived(BMessage *aMessage);
 

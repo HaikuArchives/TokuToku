@@ -85,14 +85,16 @@ status_added_descr(int32 olds, int32 news)
 #define MAINWINDOW_RECT BRect(50,50,300,350)
 #define MAINWINDOW_NAME	"TokuToku " WERSJA
 
-MainWindow::MainWindow( BString* aProfile )
+MainWindow::MainWindow( Profile* aProfile )
  	: BWindow( MAINWINDOW_RECT, MAINWINDOW_NAME, B_TITLED_WINDOW, 
  			   B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS )
 	{
-	fprintf( stderr, "MainWindow::MainWindow( %s )\n", aProfile->String() );
 	//iProfile = new Profile();
 	//iProfile->Load( aProfile );
-	SetTitle( aProfile->String() );
+	fprintf(stderr, "be");
+	iProfile = aProfile;
+	//SetTitle( aProfile->String() );
+	SetTitle("Test");
 	BRoster roster;
 	entry_ref ref;
 	BFile resfile;

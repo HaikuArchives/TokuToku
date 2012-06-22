@@ -58,6 +58,7 @@
 #define PROFILE_CREATED			'prcr'
 #define OPEN_PROFILE_WIZARD 	'oppw'
 #define CONFIG_OK				'cfok'
+#define TRY_LOGIN				'tlog'
 #define ONLINE_SOUND			"TokuToku state changed"
 #define MESSAGE_SOUND			"TokuToku new message"
 #define SHOW_MAIN_WINDOW		'bsmw'

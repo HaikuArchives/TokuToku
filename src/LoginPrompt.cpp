@@ -6,13 +6,29 @@
  */
 
 #include "LoginPrompt.h"
+#include "Person.h"
+#include "Msg.h"
 
-LoginPrompt::LoginPrompt(Profile *profile, MainWindow *window)
+#include <stdio.h>
+#include <stdlib.h>
+#include <Window.h>
+#include <View.h>
+#include <TextControl.h>
+#include <Button.h>
+#include <Box.h>
+#include <CheckBox.h>
+#include <SpaceLayoutItem.h>
+#include <GroupLayoutBuilder.h>
+
+#define PASSWORDPROMPT_LOG			'pplo'
+#define PASSWORDPROMPT_CANCEL		'ppca'
+#define PASSWORDPROMPT_NAME			"Zaloguj się"
+
+LoginPrompt::LoginPrompt(BMessenger *msgr)
 	:
-	BWindow(BRect(0, 0, 400, 170), PREFERENCES_NAME, B_FLOATING_WINDOW,
+	BWindow(BRect(0, 0, 400, 170), PASSWORDPROMPT_NAME, B_FLOATING_WINDOW,
 		B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_AUTO_UPDATE_SIZE_LIMITS),
-	fProfile(profile),
-	fWindow(window)
+	fMessenger(msgr)
 {
 	BBox *boxControl = new BBox(B_PLAIN_BORDER, NULL);
 	BBox *boxButtons = new BBox(B_PLAIN_BORDER, NULL);
@@ -47,7 +63,13 @@ LoginPrompt::LoginPrompt(Profile *profile, MainWindow *window)
 	);
 }
 
-ID *
+LoginPrompt::~LoginPrompt()
+{
+	delete fMessenger;
+}
+
+// XXX: Probably deprecated
+LoginPrompt::ID *
 LoginPrompt::Go(void)
 {
 	fSem = create_sem(0, "LoginPromptSem");
@@ -59,8 +81,8 @@ LoginPrompt::Go(void)
 	while (acquire_sem(fSem) == B_INTERRUPTED) { }
 
 	ID *ret = new ID;
-	ret.UIN = atoi(fControlID->Text());
-	ret.password.SetTo(fControlPass->Text());
+	ret->UIN = atoi(fControlID->Text());
+	ret->password.SetTo(fControlPass->Text());
 
 	if (Lock())
 		Quit();
@@ -75,17 +97,18 @@ LoginPrompt::MessageReceived(BMessage *msg)
 	{
 		case PASSWORDPROMPT_LOG:
 		{
-			if (fSem >= B_OK) 
-				delete_sem(fSem);
-			fSem = -1;
+			BMessage msg(TRY_LOGIN);
+			msg.AddInt32("uin", atoi(fControlID->Text()));
+			msg.AddString("password", fControlPass->Text());
+			fMessenger->SendMessage(&msg);
 			break;
 		}
 
+		case B_QUIT_REQUESTED:
 		case PASSWORDPROMPT_CANCEL:
 		{
-			if (fSem >= B_OK) 
-				delete_sem(fSem);
-			fSem = -1;
+			// Cancel, shut down the application
+			fMessenger->SendMessage(B_QUIT_REQUESTED);
 			break;
 		}
 

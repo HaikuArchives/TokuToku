@@ -1,13 +1,9 @@
 /*
- * ============================================================================
- *  Nazwa    : Opcje z Opcje.h
- *  Projekt  : TokuToku
- *  Authorzy : 
- *		Artur Wyszynski <artur.wyszynski@bellstream.pl>
- *  Opis:
- *		Klasa okna z opcjami
- *  Version  : 1.2
- * ============================================================================
+ * Copyright 2011-2012 Łukasz 'sil2100' Zemczak. All rights reserved.
+ *
+ * Authors:
+ *     Artur 'aljen' Wyszynski <harakash@gmail.com>
+ *     Łukasz 'sil2100' Zemczak <sil2100@vexillium.org>
  */
 
 #ifndef __BEGADU_PREFERENCES_H__
@@ -29,7 +25,7 @@ class Preferences : public BWindow
 {
 	public:
 		Preferences(Profile *aProfile, MainWindow *aWindow, BRect aRect, BResources *aRes);
-		virtual void MessageReceived(BMessage *aMessage ;
+		virtual void MessageReceived(BMessage *aMessage);
 		virtual void Show();
 
 	private:
