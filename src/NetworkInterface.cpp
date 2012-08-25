@@ -37,7 +37,6 @@ void Network::Login()
 	iLoginParam.password = ( char* ) iProfile->iPassword->String();
 	iLoginParam.async = 1;
 	iLoginParam.server_addr = inet_addr("91.214.237.10");
-	iLoginParam.server_port = htons(8074);
 	iLoginParam.status = iProfile->AutoStatus();
 //	gg_debug_level = ~0;
 	BMessenger( this ).SendMessage( ADD_HANDLER );
@@ -59,7 +58,6 @@ void Network::Login( int status )
 	iLoginParam.async = 1;
 	iLoginParam.status = iStatus;
 	iLoginParam.server_addr = inet_addr("91.214.237.10");
-	iLoginParam.server_port = htons(8074);
 //	gg_debug_level = ~0;
 	BMessenger( this ).SendMessage( ADD_HANDLER );
 	if( iWindow )

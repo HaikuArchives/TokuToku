@@ -95,7 +95,7 @@ ProfileWizard::ProfileWizard()
 	);
 
 	iLayout = new BCardLayout();
-	//BView *cards = new BView("cardsView", 0, iLayout);
+	BView *cards = new BView("cardsView", 0, iLayout);
 	iLayout->Owner()->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 
 	iLayout->AddView(boxOne);
