@@ -39,7 +39,7 @@ LoginPrompt::LoginPrompt(BMessenger *msgr)
 	boxButtons->SetLayout(layButtons);
 
 	fControlID = new BTextControl("fControlID", "Numer GG:", "", NULL);
-	fControlPass = new BTextControl("fControlPass", "Hasło:", "", NULL);
+	fControlPass = new BTextControl("fControlPass", "Hasło:", "", new BMessage(PASSWORDPROMPT_LOG));
 	fControlPass->TextView()->HideTyping(true);
 
 	BButton *buttonLogin = new BButton("login", "Zaloguj", new BMessage(PASSWORDPROMPT_LOG));
