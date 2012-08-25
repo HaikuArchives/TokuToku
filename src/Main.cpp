@@ -561,7 +561,7 @@ void MainWindow::MessageReceived( BMessage* aMessage )
 			// XXX: Temporary until StatusWindow is not finished
 			BString content("");
 			content << "Numer GG: " << target->iUIN << "\n";
-			content << "Description:\n" << target->iDescription->String() << "\n";
+			content << "Opis:\n" << target->iDescription->String() << "\n";
 			BAlert *info = new BAlert("contact_info",
 				   content.String(),
 				   "OK");
