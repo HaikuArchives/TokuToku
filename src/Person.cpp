@@ -577,11 +577,12 @@ void Userlist::SetValid( bool aValid )
 
 void Userlist::Import(struct gg_session* aSession, List* aList )
 {
-	char *blad;
 	SetValid( false );
 	if( gg_userlist_request( aSession, GG_USERLIST_GET, NULL ) == -1 )
 	{
-		sprintf( blad, "Błąd pobierania listy kontaktów: %s", strerror( errno ) );
+		char blad[BUFSIZ];
+		snprintf(blad, sizeof(blad), "Blad pobierania listy kontaktow: %s", 
+		          strerror(errno));
 		BAlert *alert = new BAlert( "Lista", blad, "OK" );
 		alert->Go();
 	} else {

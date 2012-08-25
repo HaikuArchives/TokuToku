@@ -173,15 +173,21 @@ void TokuToku::MessageReceived( BMessage *aMessage )
 
 		case TRY_LOGIN:
 		{
-			LoginPrompt::ID id;
-			aMessage->FindInt32("uin", (int32 *)&(id.UIN));
-			aMessage->FindString("password", &(id.password));
+			iPrompt->Hide();
 
-			if (!_TryConnecting(&id))
+			LoginPrompt::ID id;
+			int32 uin;
+			aMessage->FindInt32("uin", &uin);
+			aMessage->FindString("password", &(id.password));
+			id.UIN = (uin_t)uin;
+
+			if (!_TryConnecting(&id)) {
 				iPrompt->Show(); // Wrong UIN/password, try again
+				break;
+			}
 
 			// Correct password was given, show the main window
-			delete iPrompt;
+			//delete iPrompt;
 			_ShowMainWindow(iProfile);
 
 			break;
@@ -207,11 +213,13 @@ bool TokuToku::_TryConnecting(LoginPrompt::ID *id)
 	struct gg_session *session;
 	struct gg_login_params params;
 
+	fprintf(stderr, "1\n");
 	memset(&params, 0, sizeof(params));
 	params.uin = id->UIN;
 	params.password = (char *)id->password.String();
 	params.async = 0;
-	params.status = GG_STATUS_INVISIBLE;
+	params.status = GG_STATUS_AVAIL;
+	//params.server_port = htons(8074);
 	params.server_addr = inet_addr("91.214.237.10");
 
 	session = gg_login(&params);

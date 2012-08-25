@@ -26,7 +26,8 @@
 
 LoginPrompt::LoginPrompt(BMessenger *msgr)
 	:
-	BWindow(BRect(0, 0, 400, 170), PASSWORDPROMPT_NAME, B_FLOATING_WINDOW,
+	BWindow(BRect(100, 100, 300, 250), PASSWORDPROMPT_NAME, 
+		B_MODAL_WINDOW_LOOK, B_FLOATING_ALL_WINDOW_FEEL,
 		B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_AUTO_UPDATE_SIZE_LIMITS),
 	fMessenger(msgr)
 {
@@ -47,6 +48,7 @@ LoginPrompt::LoginPrompt(BMessenger *msgr)
 	SetLayout(new BGroupLayout(B_HORIZONTAL));
 
 	AddChild(BGroupLayoutBuilder(B_VERTICAL, 0)
+		.SetInsets(5, 5, 5, 5)
 		.Add(BGroupLayoutBuilder(layControl)
 			.Add(fControlID)
 			.Add(fControlPass)
