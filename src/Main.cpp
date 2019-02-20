@@ -591,12 +591,12 @@ void MainWindow::MessageReceived( BMessage* aMessage )
 					string_from_status(o->iStatus);
 
 				BNotification notify(B_INFORMATION_NOTIFICATION);
-				notify.SetApplication("TokuToku");
+				notify.SetGroup("TokuToku");
 				notify.SetTitle("Kontakt zmienił stan");
 				notify.SetContent(s.String());
 				notify.SetOnClickApp("application/x-vnd.TokuToku");
 
-				be_roster->Notify(notify, (bigtime_t)0);
+				notify.Send((bigtime_t)0);
 			}
 			break;
 
