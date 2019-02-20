@@ -126,7 +126,7 @@ void Profile::Load( BString* aProfile )
 }
 
 	char *buffer = NULL;
-	int32 size = 0;
+	ssize_t size = 0;
 	if( cfgmesg->FindRect( "iRect", &iRect ) != B_OK )
 		iRect =  BRect(50,50,300,350);
 	if( cfgmesg->FindInt32( "iNumber", ( int32* ) &iNumber ) != B_OK )

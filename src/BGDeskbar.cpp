@@ -321,7 +321,7 @@ void BGDeskbar::Pulse()
 void BGDeskbar::MouseDown( BPoint aWhere )
 	{
 	fprintf( stderr, "BGDeskbar: MouseDown( aWhere )\n" );
-	unsigned long buttons;
+	uint32 buttons;
 	if( LockLooper() )
 		{
 		GetMouse( &aWhere, &buttons, false );

@@ -214,12 +214,12 @@ ChatWindow::MessageReceived(BMessage* aMessage)
 				BString s("Wiadomość od ");
 				s << str->String();
 				BNotification notify(B_INFORMATION_NOTIFICATION);
-				notify.SetApplication("TokuToku");
+				notify.SetGroup("TokuToku");
 				notify.SetTitle(s.String());
 				notify.SetContent(msg);
 				notify.SetOnClickApp("application/x-vnd.TokuToku");
 
-				be_roster->Notify(notify, (bigtime_t)0);
+				notify.Send((bigtime_t)0);
 			}
 
 			delete str;
